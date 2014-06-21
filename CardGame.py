@@ -100,13 +100,13 @@ class main(serverbase):
                 self.scores[a] = 0
             self.hand = self.getwhites(self.cards)
             self.order = [None]+self.c.c.keys()
-            self.lastblack = None
             self.x = -1
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
         self.printdebug("A$: "+repr(self.hand))
         self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
+        self.black = None
         self.played = None
         self.phased = False
         self.endturn(False)
@@ -134,7 +134,7 @@ class main(serverbase):
                     for a in self.c.c:
                         self.queue[a].append(self.getwhites())
             else:
-                self.send(self.played or "$")
+                self.send(str(self.played or "$"))
                 if self.czar:
                     self.played = map(card, self.receive().split(";;"))
                     self.app.display("Make your choice, Card Czar.")
@@ -155,10 +155,11 @@ class main(serverbase):
             self.x += 1
             self.x %= len(self.order)
             self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
-            if self.lastblack:
-                self.blacks.append(self.lastblack)
-            self.lastblack = self.getblacks()
-            self.broadcast("The Black Card is: '"+str(self.lastblack)+"'.")
+            if self.black:
+                self.blacks.append(self.black)
+            self.black = self.getblacks()
+            self.send(str(self.black))
+            self.broadcast("The Black Card is: '"+str(self.black)+"'.")
             if send:
                 if self.x == 0:
                     self.send("$")
@@ -166,10 +167,13 @@ class main(serverbase):
                     self.send("!", self.order[self.x])
                     self.send("$", exempt=self.order[self.x])
         elif self.server != None:
+            self.black = card(self.receive())
             if send:
                 self.czar = self.receive() == "!"
         else:
             return False
+        self.pick = self.black.blanks
+        # ALLOW FOR MORE THAN ONE BLANK!
         if self.isczar():
             self.phaseturn()
         return True
