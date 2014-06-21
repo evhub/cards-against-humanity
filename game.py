@@ -174,7 +174,7 @@ class main(serverbase):
         if self.isczar():
             self.phaseturn()
         return True
-    def handler(self):
+    def handler(self, event=None):
         if self.ready and self.server != None:
             self.process(self.box.output())
     def process(self, inputstring):
