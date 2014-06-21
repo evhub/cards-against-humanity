@@ -30,6 +30,8 @@ debug = True
 # DATA AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+import os
+
 rootdir = os.path.join(os.path.split(os.getcwd())[0], 'rabbit')
 if rootdir not in sys.path:
     sys.path.append(rootdir)
