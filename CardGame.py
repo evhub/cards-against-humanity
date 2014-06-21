@@ -107,7 +107,7 @@ class main(serverbase):
         self.printdebug("A$: "+repr(self.hand))
         self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.black = None
-        self.played = None
+        self.played = []
         self.phased = False
         self.endturn(False)
         self.ready = True
@@ -121,30 +121,44 @@ class main(serverbase):
                 self.played = {}
                 for m,a in played+self.receive():
                     if m != "$":
-                        m = card(m)
-                        self.whites.append(m)
-                        self.played[m] = a
-                self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '")+"'.")
+                        ms = map(card, m.split(";;"))
+                        self.whites.extend(ms)
+                        self.played[ms] = a
+                self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '", lambda ms: "('"+strlist(ms, "', '")+"')")+"'.")
+                played = {}
+                for ms,a in self.played.items():
+                    played[strlist(ms, "; ")] = a
+                self.played = played
                 if self.x:
                     self.send(strlist(self.played.keys(), ";;"), self.order[self.x])
                     for a in self.c.c:
                         if a != self.order[self.x]:
-                            self.queue[a].append(self.getwhites())
+                            out = []
+                            for x in xrange(0, self.black.blanks):
+                                out.append(self.getwhites())
+                            self.queue[a].append(strlist(out, ";;"))
                 else:
                     for a in self.c.c:
-                        self.queue[a].append(self.getwhites())
+                        out = []
+                        for x in xrange(0, self.black.blanks):
+                            out.append(self.getwhites())
+                        self.queue[a].append(strlist(out, ";;"))
             else:
-                self.send(str(self.played or "$"))
+                if self.played:
+                    self.send(strlist(self.played, ";;"))
+                else:
+                    self.send("$")
                 if self.czar:
-                    self.played = map(card, self.receive().split(";;"))
+                    self.played = self.receive().split(";;")
                     self.app.display("Make your choice, Card Czar.")
                 else:
-                    self.hand.append(card(self.receive()))
-                    self.app.display("You just drew: '"+str(self.hand[-1])+"'.")
+                    drew = map(card, self.receive().split(";;"))
+                    self.hand.extend(drew)
+                    self.app.display("You just drew: '"+strlist(drew, "', '")+"'.")
             if not self.isczar():
                 self.phased = False
                 if self.server:
-                    choice = card(self.receive())
+                    choice = self.receive()
                     self.scores[self.played[choice]] += 1
                     self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"'.")
                 self.played = None
@@ -172,8 +186,6 @@ class main(serverbase):
                 self.czar = self.receive() == "!"
         else:
             return False
-        self.pick = self.black.blanks
-        # ALLOW FOR MORE THAN ONE BLANK!
         if self.isczar():
             self.phaseturn()
         return True
@@ -195,17 +207,24 @@ class main(serverbase):
                         self.app.display("You can't pick yet, you're still in the playing stage.")
                     elif not self.isczar():
                         self.app.display("You're not the Card Czar, so you're playing, not picking.")
-                    elif not original in self.played:
-                        self.app.display("You can't pick a card that nobody played.")
                     else:
-                        self.phased = False
-                        if self.server:
-                            self.scores[self.played[original]] += 1
-                            self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+".")
+                        test = False
+                        for play in self.played:
+                            if play.startswith(original):
+                                original = play
+                                test = True
+                                break
+                        if not test:
+                            self.app.display("You can't pick a card that nobody played.")
                         else:
-                            self.send(original)
-                        self.played = None
-                        self.endturn()
+                            self.phased = False
+                            if self.server:
+                                self.scores[self.played[original]] += 1
+                                self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+".")
+                            else:
+                                self.send(original)
+                            self.played = None
+                            self.endturn()
             elif foriginal.startswith("play "):
                 original = original[5:]
                 testnum = isreal(original)
@@ -220,13 +239,24 @@ class main(serverbase):
                         self.app.display("You can't play yet, you're still in the picking stage.")
                     elif self.isczar():
                         self.app.display("You're the Card Czar, so you're picking, not playing.")
-                    elif not original in self.hand:
-                        self.app.display("You can't play a card you don't have in your hand.")
                     else:
-                        self.played = card(original)
-                        self.app.display("You just played: '"+str(self.played)+"'.")
-                        self.hand.remove(self.played)
-                        self.phaseturn()
+                        test = False
+                        for choice in self.hand:
+                            choice = str(choice)
+                            if choice.startswith(original):
+                                original = choice
+                                test = True
+                                break
+                        if not test:
+                            self.app.display("You can't play a card that you don't have in your hand.")
+                        else:
+                            self.played.append(original)
+                            self.app.display("You just played: '"+str(self.played)+"'.")
+                            self.hand.remove(self.played)
+                            if len(self.played) < self.black.blanks:
+                                self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
+                            else:
+                                self.phaseturn()
             elif foriginal.startswith("say "):
                 self.textmsg(original[4:])
             elif original != "":
