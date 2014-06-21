@@ -1,4 +1,4 @@
 Cards Against Humanity
 ======================
 
-An extensible cards against humanity game engine.
+An extensible Cards Against Humanity game engine.
