@@ -33,7 +33,7 @@ debug = True
 # DATA AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat
+from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, popup
 import re
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -191,76 +191,110 @@ class main(serverbase):
         return True
     def handler(self):
         if self.ready and self.server != None:
-            original = basicformat(self.box.output())
-            foriginal = superformat(original)
-            if foriginal.startswith("pick "):
-                original = original[5:]
-                testnum = isreal(original)
-                if testnum and (testnum <= 0 or testnum > len(self.played) or testnum != int(testnum)):
-                    self.app.display("That's not a valid card index.")
+            self.process(self.box.output())
+    def process(self, inputstring)
+        original = basicformat(inputstring)
+        foriginal = superformat(original)
+        if foriginal.startswith("pick "):
+            original = original[5:]
+            testnum = isreal(original)
+            if testnum and (testnum <= 0 or testnum > len(self.played) or testnum != int(testnum)):
+                self.app.display("That's not a valid card index.")
+            else:
+                if testnum:
+                    original = self.played.keys()[int(1+testnum)]
                 else:
-                    if testnum:
-                        original = self.played.keys()[int(1+testnum)]
+                    original = card(original)
+                if not self.phased:
+                    self.app.display("You can't pick yet, you're still in the playing stage.")
+                elif not self.isczar():
+                    self.app.display("You're not the Card Czar, so you're playing, not picking.")
+                else:
+                    test = False
+                    for play in self.played:
+                        if play.startswith(original):
+                            original = play
+                            test = True
+                            break
+                    if not test:
+                        self.app.display("You can't pick a card that nobody played.")
                     else:
-                        original = card(original)
-                    if not self.phased:
-                        self.app.display("You can't pick yet, you're still in the playing stage.")
-                    elif not self.isczar():
-                        self.app.display("You're not the Card Czar, so you're playing, not picking.")
-                    else:
-                        test = False
-                        for play in self.played:
-                            if play.startswith(original):
-                                original = play
-                                test = True
-                                break
-                        if not test:
-                            self.app.display("You can't pick a card that nobody played.")
+                        self.phased = False
+                        if self.server:
+                            self.scores[self.played[original]] += 1
+                            self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+".")
                         else:
-                            self.phased = False
-                            if self.server:
-                                self.scores[self.played[original]] += 1
-                                self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+".")
-                            else:
-                                self.send(original)
-                            self.played = None
-                            self.endturn()
-            elif foriginal.startswith("play "):
-                original = original[5:]
-                testnum = isreal(original)
-                if testnum and (testnum <= 0 or testnum > len(self.hand) or testnum != int(testnum)):
-                    self.app.display("That's not a valid card index.")
+                            self.send(original)
+                        self.played = None
+                        self.endturn()
+        elif foriginal.startswith("play "):
+            original = original[5:]
+            testnum = isreal(original)
+            if testnum and (testnum <= 0 or testnum > len(self.hand) or testnum != int(testnum)):
+                self.app.display("That's not a valid card index.")
+            else:
+                if testnum:
+                    original = self.hand[int(1+testnum)]
                 else:
-                    if testnum:
-                        original = self.hand[int(1+testnum)]
-                    else:
-                        original = card(original)
-                    if self.phased:
-                        self.app.display("You can't play yet, you're still in the picking stage.")
-                    elif self.isczar():
-                        self.app.display("You're the Card Czar, so you're picking, not playing.")
-                    else:
-                        test = False
-                        for choice in self.hand:
-                            choice = str(choice)
-                            if choice.startswith(original):
-                                original = choice
-                                test = True
-                                break
-                        if not test:
+                    original = card(original)
+                if self.phased:
+                    self.app.display("You can't play yet, you're still in the picking stage.")
+                elif self.isczar():
+                    self.app.display("You're the Card Czar, so you're picking, not playing.")
+                else:
+                    test = False
+                    for choice in self.hand:
+                        choice = str(choice)
+                        if choice.startswith(original):
+                            original = choice
+                            test = True
+                            break
+                    if not test:
+                        if ";" in original:
+                            for item in original.split(";"):
+                                self.process("play "+item)
+                        else:
                             self.app.display("You can't play a card that you don't have in your hand.")
+                    else:
+                        self.played.append(original)
+                        self.app.display("You just played: '"+str(self.played)+"'.")
+                        self.hand.remove(self.played)
+                        if len(self.played) < self.black.blanks:
+                            self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
                         else:
-                            self.played.append(original)
-                            self.app.display("You just played: '"+str(self.played)+"'.")
-                            self.hand.remove(self.played)
-                            if len(self.played) < self.black.blanks:
-                                self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
-                            else:
-                                self.phaseturn()
-            elif foriginal.startswith("say "):
-                self.textmsg(original[4:])
-            elif original != "":
-                self.textmsg(original)
+                            self.phaseturn()
+        elif foriginal == "score":
+            if self.server:
+                points = self.scores[None]
+            else:
+                self.send("%%")
+                points = self.receive()
+            self.app.display("You currently have "+str(points)+" awesome points.")
+        elif foriginal == "hand":
+            self.app.display("Your hand contains: '"+strlist(self.hand, "', '")+"'.")
+        elif foriginal.startswith("say "):
+            self.textmsg(original[4:])
+        elif original:
+            self.textmsg(original)
+    def addsent(self, item):
+        if self.server:
+            item, a = item
+            if item.startswith("+:"):
+                item = item[2:]
+                self.app.display(item)
+                self.broadcast(item, exempt=a)
+            elif item == "%%":
+                self.send(str(self.scores[a]), a)
+            else:
+                self.sent[a].append(item)
+        elif self.server != None:
+            if item.startswith("+:"):
+                self.app.display(item[2:])
+            else:
+                self.sent.append(item)
+        else:
+            return False
+        return True
     def isczar(self):
         if self.server:
             return self.x == 0
