@@ -176,7 +176,7 @@ class main(serverbase):
     def handler(self):
         if self.ready and self.server != None:
             self.process(self.box.output())
-    def process(self, inputstring)
+    def process(self, inputstring):
         original = basicformat(inputstring)
         foriginal = superformat(original)
         if foriginal.startswith("pick "):
