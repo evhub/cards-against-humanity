@@ -31,7 +31,14 @@ class card(object):
             self.text, self.blanks = self.text.rsplit(" (", 1)
             self.blanks = int(self.blanks[:-1])
         else:
-            self.blanks = len(re.compile(r"\b_+\b").findall(self.text))
+            self.blanks = 0
+            inside = False
+            for c in self.text:
+                if c == "_" and not inside:
+                    self.blanks += 1
+                    inside = True
+                else:
+                    inside = False
     def __str__(self):
         out = self.text
         if self.blanks > 0:
@@ -117,16 +124,10 @@ class main(serverbase):
                     self.send(strlist(self.played.keys(), ";;"), self.order[self.x])
                     for a in self.c.c:
                         if a != self.order[self.x]:
-                            out = []
-                            for x in xrange(0, self.black.blanks):
-                                out.append(self.getwhites())
-                            self.queue[a].append(strlist(out, ";;"))
+                            self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
                 else:
                     for a in self.c.c:
-                        out = []
-                        for x in xrange(0, self.black.blanks):
-                            out.append(self.getwhites())
-                        self.queue[a].append(strlist(out, ";;"))
+                        self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
             else:
                 if self.played:
                     self.send(strlist(self.played, ";;"))
@@ -155,7 +156,7 @@ class main(serverbase):
             self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
             if self.black:
                 self.blacks.append(self.black)
-            self.black = self.getblacks()
+            self.black = self.getblacks()[0]
             self.send(str(self.black))
             self.broadcast("The Black Card is: '"+str(self.black)+"'.")
             if send:
