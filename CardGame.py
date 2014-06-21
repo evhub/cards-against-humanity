@@ -99,7 +99,7 @@ class main(serverbase):
                 self.queue[a].append(strlist(self.getwhites(self.cards), ";;"))
                 self.scores[a] = 0
             self.hand = self.getwhites(self.cards)
-            self.order = [None]+self.c.c
+            self.order = [None]+self.c.c.keys()
             self.lastblack = None
             self.x = -1
         else:
