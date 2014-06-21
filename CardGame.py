@@ -87,10 +87,13 @@ class main(serverbase):
         self.blacks, out = self.gen.take(self.blacks, count)
         return out
     def begin(self):
+        self.printdebug(": BEGIN")
         self.gen = random()
         if self.server:
             self.whites = getcards(self.whites)
+            self.printdebug("A#: "+str(len(self.whites)))
             self.blacks = getcards(self.blacks)
+            self.printdebug("Q#: "+str(len(self.blacks)))
             self.scores = {None:0}
             for a in self.c.c:
                 self.queue[a].append(strlist(self.getwhites(self.cards), ";;"))
@@ -102,6 +105,7 @@ class main(serverbase):
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
+        self.printdebug("A$: "+repr(self.hand))
         self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.played = None
         self.phased = False
