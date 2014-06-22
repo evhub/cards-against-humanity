@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 from __future__ import print_function
-from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, popup
+from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, isreal, popup
 import re
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
