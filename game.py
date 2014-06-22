@@ -60,7 +60,9 @@ def getcards(filenames, black=False):
             f = openfile(name, "rb")
             for line in readfile(f).splitlines():
                 line = basicformat(line)
-                if not (line.startswith("#") or line.endswith(":")):
+                if line and not (line.startswith("#") or line.endswith(":")):
+                    if line[-1] not in [".", "?", "!"]:
+                        line += "."
                     cards.append(card(basicformat(line)))
                     if black:
                         cards[-1].black()
