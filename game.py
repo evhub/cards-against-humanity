@@ -107,6 +107,9 @@ class main(serverbase):
         self.black = None
         self.played = []
         self.phased = False
+        self.waiting = False
+        self.onsent("end", self.endwait)
+        self.onsent("phase", self.phasewait)
         self.endturn(False)
         self.ready = True
     def phaseturn(self):
@@ -160,8 +163,18 @@ class main(serverbase):
                     self.scores[self.played[choice]] += 1
                     self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"'.")
                 self.played = None
-                self.endturn()
+                self.waiting = "end"
         return True
+    def endwait(self, arg="", a=None):
+        if self.waiting == "end":
+            self.endturn()
+        else:
+            self.nokey("end", arg, a)
+    def phasewait(self, arg="", a=None):
+        if self.waiting == "phase":
+            self.phaseturn()
+        else:
+            self.nokey("phase", arg, a)
     def endturn(self, send=True):
         self.sync()
         if self.server:
@@ -186,7 +199,7 @@ class main(serverbase):
         else:
             return False
         if self.isczar():
-            self.phaseturn()
+            self.waiting = "phase"
         return True
     def handler(self, event=None):
         if self.ready and self.server != None:
@@ -206,6 +219,8 @@ class main(serverbase):
                     self.app.display("You can't pick yet, you're still in the playing stage.")
                 elif not self.isczar():
                     self.app.display("You're not the Card Czar, so you're playing, not picking.")
+                elif self.waiting:
+                    self.app.display("You have to wait for others until you can pick.")
                 else:
                     test = False
                     for play in self.played:
@@ -223,6 +238,7 @@ class main(serverbase):
                         else:
                             self.send(original)
                         self.played = None
+                        self.trigger("end")
                         self.endturn()
         elif foriginal.startswith("play "):
             original = original[5:]
@@ -236,6 +252,8 @@ class main(serverbase):
                     self.app.display("You can't play yet, you're still in the picking stage.")
                 elif self.isczar():
                     self.app.display("You're the Card Czar, so you're picking, not playing.")
+                elif self.waiting:
+                    self.app.display("You have to wait for others until you can play.")
                 else:
                     test = False
                     for choice in self.hand:
@@ -257,6 +275,7 @@ class main(serverbase):
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
                         else:
+                            self.trigger("phase")
                             self.phaseturn()
         elif foriginal == "score":
             if self.server:
