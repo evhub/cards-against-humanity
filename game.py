@@ -102,7 +102,7 @@ class main(serverbase):
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
-        self.printdebug("A$: "+repr(self.hand))
+        self.app.display("Loaded.")
         self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.black = None
         self.played = []
@@ -115,9 +115,13 @@ class main(serverbase):
             return False
         else:
             if self.server:
-                played = [(self.played, None)]
+                if self.played:
+                    played = [(self.played, None)]
+                else:
+                    played = []
+                played += self.receive()
                 self.played = {}
-                for m,a in played+self.receive():
+                for m,a in played:
                     if m != "$":
                         if not islist(m):
                             m = map(card, m.split(";;"))
@@ -246,8 +250,8 @@ class main(serverbase):
                             self.app.display("You can't play a card that you don't have in your hand.")
                     else:
                         self.played.append(original)
-                        self.app.display("You just played: '"+str(self.played)+"'.")
-                        self.hand.remove(self.played)
+                        self.app.display("You just played: '"+str(self.played[-1])+"'.")
+                        self.hand.remove(self.played[-1])
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
                         else:
