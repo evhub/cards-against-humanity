@@ -73,7 +73,7 @@ def getcards(filenames, black=False):
     return cards
 
 class main(serverbase):
-    def __init__(self, name="Cards Against the Brotherhood", message="Loading...", height=35, speed=400, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
+    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", height=35, speed=400, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
         self.cards = int(cards)
         self.whites = whites
         self.blacks = blacks
