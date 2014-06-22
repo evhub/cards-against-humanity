@@ -242,7 +242,6 @@ class main(serverbase):
                             self.send(original)
                         self.played = None
                         self.trigger("end")
-                        self.endturn()
         elif foriginal.startswith("play "):
             original = original[5:]
             testnum = isreal(original)
@@ -279,7 +278,6 @@ class main(serverbase):
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
                         else:
                             self.trigger("phase")
-                            self.phaseturn()
         elif foriginal == "score":
             if self.server:
                 points = self.scores[None]
