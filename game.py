@@ -118,7 +118,6 @@ class main(serverbase):
             return False
         else:
             self.printdebug(": PHASE")
-            self.sync()
             if self.server:
                 if self.played:
                     played = [(self.played, None)]
@@ -181,7 +180,6 @@ class main(serverbase):
             return False
         else:
             self.printdebug(": TURN")
-            self.sync()
             if self.server:
                 self.x += 1
                 self.x %= len(self.order)
