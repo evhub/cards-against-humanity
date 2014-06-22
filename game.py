@@ -117,6 +117,7 @@ class main(serverbase):
         if self.server == None:
             return False
         else:
+            self.printdebug(": PHASE")
             self.sync()
             if self.server:
                 if self.played:
@@ -176,31 +177,33 @@ class main(serverbase):
         else:
             self.nokey("phase", arg, a)
     def endturn(self, send=True):
-        self.sync()
-        if self.server:
-            self.x += 1
-            self.x %= len(self.order)
-            self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
-            if self.black:
-                self.blacks.append(self.black)
-            self.black = self.getblacks()[0]
-            self.send(str(self.black))
-            self.broadcast("The Black Card is: '"+str(self.black)+"'.")
-            if send:
-                if self.x == 0:
-                    self.send("$")
-                else:
-                    self.send("!", self.order[self.x])
-                    self.send("$", exempt=self.order[self.x])
-        elif self.server != None:
-            self.black = card(self.receive())
-            if send:
-                self.czar = self.receive() == "!"
-        else:
+        if self.server == None:
             return False
-        if self.isczar():
-            self.waiting = "phase"
-        return True
+        else:
+            self.printdebug(": TURN")
+            self.sync()
+            if self.server:
+                self.x += 1
+                self.x %= len(self.order)
+                self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
+                if self.black:
+                    self.blacks.append(self.black)
+                self.black = self.getblacks()[0]
+                self.send(str(self.black))
+                self.broadcast("The Black Card is: '"+str(self.black)+"'.")
+                if send:
+                    if self.x == 0:
+                        self.send("$")
+                    else:
+                        self.send("!", self.order[self.x])
+                        self.send("$", exempt=self.order[self.x])
+            else:
+                self.black = card(self.receive())
+                if send:
+                    self.czar = self.receive() == "!"
+            if self.isczar():
+                self.waiting = "phase"
+            return True
     def handler(self, event=None):
         if self.ready and self.server != None:
             self.process(self.box.output())
