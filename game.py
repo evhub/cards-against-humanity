@@ -114,6 +114,7 @@ class main(serverbase):
         if self.server == None:
             return False
         else:
+            self.sync()
             if self.server:
                 if self.played:
                     played = [(self.played, None)]
@@ -162,6 +163,7 @@ class main(serverbase):
                 self.endturn()
         return True
     def endturn(self, send=True):
+        self.sync()
         if self.server:
             self.x += 1
             self.x %= len(self.order)
