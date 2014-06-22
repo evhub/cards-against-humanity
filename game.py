@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 from __future__ import print_function
-from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, isreal, popup
+from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, popup, isreal, islist
 import re
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,6 +39,9 @@ class card(object):
                     inside = True
                 else:
                     inside = False
+    def black(self):
+        if self.blanks == 0:
+            self.blanks += 1
     def __str__(self):
         out = self.text
         if self.blanks > 0:
@@ -50,7 +53,7 @@ class card(object):
         else:
             return str(self) == other
 
-def getcards(filenames):
+def getcards(filenames, black=False):
     cards = []
     for name in filenames:
         try:
@@ -59,6 +62,8 @@ def getcards(filenames):
                 line = basicformat(line)
                 if not (line.startswith("#") or line.endswith(":")):
                     cards.append(card(basicformat(line)))
+                    if black:
+                        cards[-1].black()
         except IOError:
             pass
         else:
@@ -83,7 +88,7 @@ class main(serverbase):
         if self.server:
             self.whites = getcards(self.whites)
             self.printdebug("A#: "+str(len(self.whites)))
-            self.blacks = getcards(self.blacks)
+            self.blacks = getcards(self.blacks, True)
             self.printdebug("Q#: "+str(len(self.blacks)))
             self.scores = {None:0}
             for a in self.c.c:
@@ -112,9 +117,10 @@ class main(serverbase):
                 self.played = {}
                 for m,a in played+self.receive():
                     if m != "$":
-                        ms = map(card, m.split(";;"))
-                        self.whites.extend(ms)
-                        self.played[ms] = a
+                        if not islist(m):
+                            m = map(card, m.split(";;"))
+                        self.whites.extend(m)
+                        self.played[m] = a
                 self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '", lambda ms: "('"+strlist(ms, "', '")+"')")+"'.")
                 played = {}
                 for ms,a in self.played.items():
