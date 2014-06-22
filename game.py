@@ -193,9 +193,7 @@ class main(serverbase):
                 self.app.display("That's not a valid card index.")
             else:
                 if testnum:
-                    original = self.played.keys()[int(1+testnum)]
-                else:
-                    original = card(original)
+                    original = str(self.played.keys()[int(1+testnum)])
                 if not self.phased:
                     self.app.display("You can't pick yet, you're still in the playing stage.")
                 elif not self.isczar():
@@ -225,9 +223,7 @@ class main(serverbase):
                 self.app.display("That's not a valid card index.")
             else:
                 if testnum:
-                    original = self.hand[int(1+testnum)]
-                else:
-                    original = card(original)
+                    original = str(self.hand[int(1+testnum)])
                 if self.phased:
                     self.app.display("You can't play yet, you're still in the picking stage.")
                 elif self.isczar():
