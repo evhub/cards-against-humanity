@@ -127,11 +127,11 @@ class main(serverbase):
                         if not islist(m):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
-                        self.played[m] = a
-                self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '", lambda ms: "('"+strlist(ms, "', '")+"')")+"'.")
+                        self.played[strlist(m, ";;")] = a
+                self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+"'.")
                 played = {}
-                for ms,a in self.played.items():
-                    played[strlist(ms, "; ")] = a
+                for m,a in self.played.items():
+                    played[strlist(m.split(";;"), "; ")] = a
                 self.played = played
                 if self.x:
                     self.send(strlist(self.played.keys(), ";;"), self.order[self.x])
@@ -275,9 +275,7 @@ class main(serverbase):
         if self.server:
             item, a = item
             if item.startswith("+:"):
-                item = item[2:]
-                self.app.display(item)
-                self.broadcast(item, exempt=a)
+                self.broadcast(item[2:], exempt=a)
             elif item == "%%":
                 self.send(str(self.scores[a]), a)
             else:
