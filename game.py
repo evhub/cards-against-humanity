@@ -134,7 +134,7 @@ class main(serverbase):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
                         self.played[strlist(m, ";;")] = a
-                self.broadcast("The cards played were: '"+strlist(self.played.keys(), "', '", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+"'.")
+                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+"'.")
                 played = {}
                 for m,a in self.played.items():
                     played[strlist(m.split(";;"), "; ")] = a
@@ -167,6 +167,8 @@ class main(serverbase):
                     self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"'.")
                 self.played = None
                 self.waiting = "end"
+            else:
+                self.waiting = None
         return True
     def endwait(self, arg="", a=None):
         if self.waiting == "end":
@@ -209,6 +211,8 @@ class main(serverbase):
                     self.czar = self.receive() == "!"
             if self.isczar():
                 self.waiting = "phase"
+            else:
+                self.waiting = None
             return True
     def handler(self, event=None):
         if self.ready and self.server != None:
