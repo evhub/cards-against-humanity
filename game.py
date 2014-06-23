@@ -226,7 +226,9 @@ class main(serverbase):
     def process(self, inputstring):
         original = basicformat(inputstring)
         foriginal = superformat(original)
-        if foriginal.startswith("pick "):
+        if foriginal == "help":
+            self.app.display("The available commands are: pick, play, score, hand, say")
+        elif foriginal.startswith("pick "):
             original = original[5:]
             testnum = isreal(original)
             if testnum and (testnum <= 0 or testnum > len(self.played) or testnum != int(testnum)):
