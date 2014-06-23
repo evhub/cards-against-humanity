@@ -145,6 +145,9 @@ class main(serverbase):
                     for a in self.c.c:
                         if a != self.order[self.x]:
                             self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
+                    drew = self.getwhites(self.black.blanks)
+                    self.hand.extend(drew)
+                    self.app.display("You just drew: '"+strlist(drew, "', '")+"'.")
                 else:
                     for a in self.c.c:
                         self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
