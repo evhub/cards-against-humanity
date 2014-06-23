@@ -115,7 +115,7 @@ class main(serverbase):
         self.onsent("score", self.replyscore)
         self.endturn(False)
         self.ready = True
-    def phaseturn(self):
+    def phaseturn(self, arg="", a=None):
         self.phased = True
         if self.server == None:
             return False
