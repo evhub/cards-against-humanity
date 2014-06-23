@@ -73,11 +73,11 @@ def getcards(filenames, black=False):
     return list(set(cards))
 
 class main(serverbase):
-    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", height=35, speed=400, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
+    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", height=35, speed=400, port=6775, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
         self.cards = int(cards)
         self.whites = whites
         self.blacks = blacks
-        serverbase.__init__(self, name, message, height, speed, debug)
+        serverbase.__init__(self, name, message, height, speed, port, debug)
     def getwhites(self, count=1):
         self.whites, out = self.gen.take(self.whites, count)
         return out

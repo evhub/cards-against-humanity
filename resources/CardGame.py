@@ -26,6 +26,9 @@ cards = 10
 # Whether to turn on or off debug output:
 debug = False
 
+# What port to connect to:
+port = 6775
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # DATA AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,4 +46,4 @@ from game import main
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-main(whites=whites, blacks=blacks, cards=cards, debug=debug).start()
+main(whites=whites, blacks=blacks, cards=cards, port=port, debug=debug).start()
