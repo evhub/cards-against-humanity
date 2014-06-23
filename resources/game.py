@@ -167,12 +167,19 @@ class main(serverbase):
                 self.phased = False
             self.waiting = "end"
         return True
+    def sendscores(self):
+        out = []
+        for a in self.scores:
+            name = self.names[a]
+            out.append("'"+name+"' ("+str(self.scores[a])+")")
+        self.broadcast("The current awesome point totals are: "+strlist(out, ", ")+".")
     def pickwait(self, arg="", a=None):
         if self.waiting == "end":
             arg = str(arg)
             self.scores[self.played[arg]] += 1
             self.broadcast("An awesome point was awarded to '"+self.names[self.played[arg]]+"' for ('"+strlist(arg.split("; "), "', '")+"').")
             self.trigger("end")
+            self.sendscores()
         else:
             self.nokey("pick", arg, a)
     def endwait(self, arg="", a=None):
@@ -259,6 +266,8 @@ class main(serverbase):
                         else:
                             self.trigger("pick", original, toall=False)
                         self.trigger("end")
+                        if self.server:
+                            self.sendscores()
         elif foriginal.startswith("play "):
             original = original[5:]
             testnum = isreal(original)
