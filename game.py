@@ -209,6 +209,7 @@ class main(serverbase):
                 if send:
                     self.czar = self.receive() == "!"
             self.waiting = "phase"
+            self.played = []
             return True
     def handler(self, event=None):
         if self.ready and self.server != None:
