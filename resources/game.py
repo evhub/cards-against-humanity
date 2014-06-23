@@ -112,8 +112,8 @@ class main(serverbase):
         self.onsent("score", self.replyscore)
         self.onsent("pick", self.pickwait)
         if self.server:
-            self.broadcast("Connected players are: '"+strlist(self.names.values(), "', '")+"'.")
-        self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
+            self.broadcast("Connected players are: "+strlist(self.names.values(), ", ")+".")
+        self.app.display("You just drew: "+strlist(self.hand, ", ")+".")
         self.endturn(False)
         self.ready = True
     def phaseturn(self, arg="", a=None):
@@ -135,7 +135,7 @@ class main(serverbase):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
                         self.played[strlist(m, ";;")] = a
-                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+".")
+                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "("+strlist(m.split(";;"), "; ")+")")+".")
                 played = {}
                 for m,a in self.played.items():
                     played[strlist(m.split(";;"), "; ")] = a
@@ -147,7 +147,7 @@ class main(serverbase):
                             self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
                     drew = self.getwhites(self.black.blanks)
                     self.hand.extend(drew)
-                    self.app.display("You just drew: '"+strlist(drew, "', '")+"'.")
+                    self.app.display("You just drew: "+strlist(drew, "; ")+".")
                 else:
                     for a in self.c.c:
                         self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
@@ -161,7 +161,7 @@ class main(serverbase):
                 else:
                     drew = map(card, self.receive().split(";;"))
                     self.hand.extend(drew)
-                    self.app.display("You just drew: '"+strlist(drew, "', '")+"'.")
+                    self.app.display("You just drew: "+strlist(drew, "; ")+".")
             if self.isczar():
                 self.app.display("Make your choice, Card Czar.")
             else:
@@ -173,13 +173,13 @@ class main(serverbase):
         out = []
         for a in self.scores:
             name = self.names[a]
-            out.append("'"+name+"' ("+str(self.scores[a])+")")
+            out.append(""+name+" ("+str(self.scores[a])+")")
         self.broadcast("The current awesome point totals are: "+strlist(out, ", ")+".")
     def pickwait(self, arg="", a=None):
         if self.waiting == "end":
             arg = str(arg)
             self.scores[self.played[arg]] += 1
-            self.broadcast("An awesome point was awarded to '"+self.names[self.played[arg]]+"' for ('"+strlist(arg.split("; "), "', '")+"').")
+            self.broadcast("An awesome point was awarded to "+self.names[self.played[arg]]+" for ("+arg+").")
             self.trigger("end")
             self.sendscores()
         else:
@@ -209,7 +209,7 @@ class main(serverbase):
                 self.didphase = []
                 self.x += 1
                 self.x %= len(self.order)
-                self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
+                self.broadcast("The Card Czar is: "+self.names[self.order[self.x]]+".")
                 if self.black:
                     self.blacks.append(self.black)
                 self.black = self.getblacks()[0]
@@ -224,7 +224,7 @@ class main(serverbase):
                 self.black = card(self.receive())
                 if send:
                     self.czar = self.receive() == "!"
-            self.app.display("The Black Card is: '"+str(self.black)+"'.")
+            self.app.display("The Black Card is: "+str(self.black)+".")
             self.waiting = "phase"
             return True
     def handler(self, event=None):
@@ -264,7 +264,7 @@ class main(serverbase):
                         self.phased = False
                         if self.server:
                             self.scores[self.played[original]] += 1
-                            self.broadcast("An awesome point was awarded to '"+self.names[self.played[original]]+"' for ('"+strlist(original.split("; "), "', '")+"').")
+                            self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+" for ("+original+").")
                         else:
                             self.trigger("pick", original, toall=False)
                         self.trigger("end")
@@ -302,7 +302,7 @@ class main(serverbase):
                             self.app.display("You can't play a card that you don't have in your hand.")
                     else:
                         self.played.append(original)
-                        self.app.display("You just played: '"+str(self.played[-1])+"'.")
+                        self.app.display("You just played: "+str(self.played[-1])+".")
                         self.hand.remove(self.played[-1])
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
@@ -318,7 +318,7 @@ class main(serverbase):
                 points = self.receive()
             self.app.display("You currently have "+str(points)+" awesome points.")
         elif foriginal == "hand":
-            self.app.display("Your hand contains: '"+strlist(self.hand, "', '")+"'.")
+            self.app.display("Your hand contains: "+strlist(self.hand, "; ")+".")
         elif foriginal.startswith("say "):
             self.textmsg(original[4:])
         elif original:
