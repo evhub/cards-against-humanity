@@ -288,8 +288,7 @@ class main(serverbase):
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
                         elif self.server:
-                            if not None in self.didphase:
-                                self.didphase.append(None)
+                            self.schedule(self.phasewait)
                         else:
                             self.trigger("phase1", toall=False)
         elif foriginal == "score":
