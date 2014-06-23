@@ -208,7 +208,6 @@ class main(serverbase):
                     self.blacks.append(self.black)
                 self.black = self.getblacks()[0]
                 self.send(str(self.black))
-                self.broadcast("The Black Card is: '"+str(self.black)+"'.")
                 if send:
                     if self.x == 0:
                         self.send("$")
@@ -219,6 +218,7 @@ class main(serverbase):
                 self.black = card(self.receive())
                 if send:
                     self.czar = self.receive() == "!"
+            self.app.display("The Black Card is: '"+str(self.black)+"'.")
             self.waiting = "phase"
             return True
     def handler(self, event=None):
