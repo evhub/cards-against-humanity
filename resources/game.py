@@ -70,7 +70,7 @@ def getcards(filenames, black=False):
             pass
         else:
             f.close()
-    return cards
+    return list(set(cards))
 
 class main(serverbase):
     def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", height=35, speed=400, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
@@ -99,7 +99,6 @@ class main(serverbase):
             self.hand = self.getwhites(self.cards)
             self.order = [None]+self.c.c.keys()
             self.x = -1
-            self.didphase = []
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
@@ -191,7 +190,6 @@ class main(serverbase):
         if self.waiting == "phase":
             if not a in self.didphase:
                 self.didphase.append(a)
-            print(self.didphase, len(self.didphase), len(self.c.c))
             if len(self.didphase) >= len(self.c.c):
                 self.trigger("phase2")
         else:
@@ -205,6 +203,7 @@ class main(serverbase):
         else:
             self.printdebug(": TURN")
             if self.server:
+                self.didphase = []
                 self.x += 1
                 self.x %= len(self.order)
                 self.broadcast("The Card Czar is: '"+self.names[self.order[self.x]]+"'.")
