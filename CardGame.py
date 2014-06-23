@@ -24,7 +24,7 @@ blacks = ["cahq.txt", "homebrewq.txt"]
 cards = 10
 
 # Whether to turn on or off debug output:
-debug = True
+debug = False
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # DATA AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
