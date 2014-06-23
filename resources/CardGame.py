@@ -17,8 +17,8 @@
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # What files to get the white and black cards from:
-whites = ["caha.txt", "homebrewa.txt","expansiona.txt","expansion2a.txt"]
-blacks = ["cahq.txt", "homebrewq.txt", "expansionq.txt","expansion2q.txt"]
+whites = ["caha.txt", "homebrewa.txt","expansiona.txt","expansion2a.txt","expansion3a.txt"]
+blacks = ["cahq.txt", "homebrewq.txt", "expansionq.txt","expansion2q.txt","expansion3q.txt"]
 
 # How many cards in a hand:
 cards = 10
