@@ -99,6 +99,7 @@ class main(serverbase):
             self.hand = self.getwhites(self.cards)
             self.order = [None]+self.c.c.keys()
             self.x = -1
+            self.didphase = []
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
@@ -109,7 +110,8 @@ class main(serverbase):
         self.phased = False
         self.waiting = False
         self.onsent("end", self.endwait)
-        self.onsent("phase", self.phasewait)
+        self.onsent("phase1", self.phasewait)
+        self.onsent("phase2", self.phaseturn)
         self.onsent("score", self.replyscore)
         self.endturn(False)
         self.ready = True
@@ -173,11 +175,13 @@ class main(serverbase):
             self.nokey("end", arg, a)
     def phasewait(self, arg="", a=None):
         if self.waiting == "phase":
-            self.phaseturn()
+            if not a in self.didphase:
+                self.didphase.append(a)
+            if len(self.didphase) == len(self.c.c):
+                self.trigger("phase2")
         else:
             self.nokey("phase", arg, a)
     def replyscore(self, arg="", a=None):
-        
         self.send(str(arg)+str(self.scores[a]), a)
     def endturn(self, send=True):
         if self.server == None:
@@ -226,6 +230,8 @@ class main(serverbase):
                     self.app.display("You're not the Card Czar, so you're playing, not picking.")
                 elif self.waiting:
                     self.app.display("You have to wait for others until you can pick.")
+                elif not self.played:
+                    self.app.display("You can't pick multiple people's cards.")
                 else:
                     test = False
                     for play in self.played:
@@ -258,6 +264,8 @@ class main(serverbase):
                     self.app.display("You're the Card Czar, so you're picking, not playing.")
                 elif self.waiting:
                     self.app.display("You have to wait for others until you can play.")
+                elif len(self.played) >= self.black.blanks:
+                    self.app.display("You can't play anymore cards this turn.")
                 else:
                     test = False
                     for choice in self.hand:
@@ -278,8 +286,11 @@ class main(serverbase):
                         self.hand.remove(self.played[-1])
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
+                        elif self.server:
+                            if not None in self.didphase:
+                                self.didphase.append(None)
                         else:
-                            self.trigger("phase")
+                            self.trigger("phase1", toall=False)
         elif foriginal == "score":
             if self.server:
                 points = self.scores[None]
