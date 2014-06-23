@@ -10,4 +10,6 @@ An extensible Cards Against Humanity game engine.
 2. Download and unzip Rabbit 0.3.1:
 	* https://github.com/evhub/rabbit/archive/v0.3.1.zip
 3. Drag the "rabbit" folder into the "resources" folder
-4. Run the CardGame executable file
+4. Run the CardGame executable file:
+	* "CardGame" on Unix
+	* "CardGame.bat" on Windows
