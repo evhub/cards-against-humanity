@@ -113,6 +113,7 @@ class main(serverbase):
         self.onsent("phase1", self.phasewait)
         self.onsent("phase2", self.phaseturn)
         self.onsent("score", self.replyscore)
+        self.onsent("pick", self.pickwait)
         self.endturn(False)
         self.ready = True
     def phaseturn(self, arg="", a=None):
@@ -161,14 +162,19 @@ class main(serverbase):
             if self.isczar():
                 self.app.display("Make your choice, Card Czar.")
             else:
+                self.app.display("The Card Czar is making their choice.")
                 self.phased = False
-                if self.server:
-                    choice = self.receive()
-                    self.scores[self.played[choice]] += 1
-                    self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"' for ('"+strlist(choice.split("; "), "', '")+"').")
                 self.played = []
             self.waiting = "end"
         return True
+    def pickwait(self, arg="", a=None):
+        if self.waiting == "end":
+            arg = str(arg)
+            self.scores[self.played[arg]] += 1
+            self.broadcast("An awesome point was awarded to '"+self.names[self.played[arg]]+"' for ('"+strlist(arg.split("; "), "', '")+"').")
+            self.trigger("end")
+        else:
+            self.nokey("pick", arg, a)
     def endwait(self, arg="", a=None):
         if self.waiting == "end":
             self.endturn()
@@ -178,7 +184,8 @@ class main(serverbase):
         if self.waiting == "phase":
             if not a in self.didphase:
                 self.didphase.append(a)
-            if len(self.didphase) == len(self.c.c):
+            print(self.didphase, len(self.didphase), len(self.c.c))
+            if len(self.didphase) >= len(self.c.c):
                 self.trigger("phase2")
         else:
             self.nokey("phase", arg, a)
@@ -248,8 +255,8 @@ class main(serverbase):
                             self.scores[self.played[original]] += 1
                             self.broadcast("An awesome point was awarded to '"+self.names[self.played[original]]+"' for ('"+strlist(original.split("; "), "', '")+"').")
                         else:
-                            self.send(original)
-                        self.played = None
+                            self.trigger("pick", original, toall=False)
+                        self.played = []
                         self.trigger("end")
         elif foriginal.startswith("play "):
             original = original[5:]
