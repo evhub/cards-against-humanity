@@ -104,7 +104,6 @@ class main(serverbase):
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
         self.app.display("Loaded.")
-        self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.black = None
         self.played = []
         self.phased = False
@@ -114,6 +113,9 @@ class main(serverbase):
         self.onsent("phase2", self.phaseturn)
         self.onsent("score", self.replyscore)
         self.onsent("pick", self.pickwait)
+        if self.server:
+            self.broadcast("Connected players are: '"+strlist(self.names.keys(), "', '")+"'.")
+        self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.endturn(False)
         self.ready = True
     def phaseturn(self, arg="", a=None):
