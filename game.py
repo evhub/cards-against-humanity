@@ -165,7 +165,7 @@ class main(serverbase):
                     choice = self.receive()
                     self.scores[self.played[choice]] += 1
                     self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"' for ('"+strlist(choice.split("; "), "', '")+"').")
-                self.played = None
+            self.played = []
             self.waiting = "end"
         return True
     def endwait(self, arg="", a=None):
@@ -244,7 +244,7 @@ class main(serverbase):
                         self.phased = False
                         if self.server:
                             self.scores[self.played[original]] += 1
-                            self.broadcast("An awesome point was awarded to "+self.names[self.played[original]]+".")
+                            self.broadcast("An awesome point was awarded to '"+self.names[self.played[original]]+"' for ('"+strlist(original.split("; "), "', '")+"').")
                         else:
                             self.send(original)
                         self.played = None
