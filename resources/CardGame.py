@@ -43,5 +43,4 @@ from game import main
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    main(whites=whites, blacks=blacks, cards=cards, debug=debug).start()
+main(whites=whites, blacks=blacks, cards=cards, debug=debug).start()
