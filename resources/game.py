@@ -17,7 +17,24 @@
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 from __future__ import print_function
-from rabbit.all import serverbase, strlist, random, readfile, openfile, basicformat, superformat, popup, isreal, islist
+from rabbit.all import (
+    serverbase,
+    strlist,
+    random,
+    readfile,
+    openfile,
+    basicformat,
+    superformat,
+    popup,
+    isreal,
+    islist,
+    Tkinter,
+    console,
+    entry,
+    rootbind,
+    formatisyes,
+    formatisno
+    )
 import re
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -74,11 +91,56 @@ def getcards(filenames, black=False):
     return list(set(cards))
 
 class main(serverbase):
-    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", height=35, speed=400, port=6775, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
+    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", speed=400, port=6775, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
+        self.ready = False
+        self.debug = bool(debug)
         self.cards = int(cards)
         self.whites = whites
         self.blacks = blacks
-        serverbase.__init__(self, name, message, height, speed, port, debug)
+
+        self.root = Tkinter.Tk()
+        rootbind(self.root, self.disconnect)
+        self.root.title(str(name))
+
+        self.frameA = Tkinter.Frame(self.root, height=36, width=60)
+        self.frameA.pack(side="left")
+        self.app = console(self.frameA, message, height=35, width=60)
+        self.app.dobind()
+        self.box = entry(self.app, width=60)
+        self.box.dobind(self.handler)
+
+        self.frameB = Tkinter.Frame(self.root, height=36, width=40)
+        self.frameB.pack(side="right")
+        self.info = console(self.frameB, None, height=30, width=40)
+        self.info.dobind()
+        self.topinfo = console(self.frameB, None, height=5, width=60, side="top")
+        self.topinfo.dobind()
+
+        self.show = self.app.display
+        self.speed = int(speed)
+        self.server = bool(formatisno(popup("Question", "Client(Y) or Server(n)?")))
+        if not self.server:
+            self.host = None
+            while not self.host:
+                self.host = popup("Entry", "Host?")
+                if "." not in self.host and self.host != "local":
+                    popup("Error", "That isn't a valid host name. Please try again.")
+                    self.host = ""
+            if ":" in self.host:
+                self.host, port = self.host.rsplit(":", 1)
+        self.port = int(port)
+        self.app.display("Initialized.")
+        if self.server:
+            self.number = 0
+            while self.number <= 0:
+                self.number = popup("Integer", "Number of clients?")
+            self.names = {None: popup("Entry", "Name?") or "Host"}
+            self.app.display("Waiting For Connections...")
+        else:
+            self.name = popup("Entry", "Name?") or "Guest"
+            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nTo prevent server/client desynchronization, you should not click OK on this popup until your host tells you to.")
+            self.app.display("Connecting...")
+        self.register(self.connect, 200)
     def getwhites(self, count=1):
         self.whites, out = self.gen.take(self.whites, count)
         return out
@@ -163,6 +225,7 @@ class main(serverbase):
                     drew = map(card, self.receive().split(";;"))
                     self.hand.extend(drew)
                     self.app.display("You just drew: "+strlist(drew, "; ")+".")
+            self.newinfo()
             if self.isczar():
                 self.app.display("Make your choice, Card Czar.")
             else:
@@ -226,8 +289,12 @@ class main(serverbase):
                 if send:
                     self.czar = self.receive() == "!"
             self.app.display("The Black Card is: "+str(self.black)+".")
+            self.newinfo()
             self.waiting = "phase"
             return True
+    def newinfo(self):
+        self.topinfo.clear("Q: "+str(self.black))
+        self.info.clear("Hand:\n"+strlist(self.hand, "\n"))
     def handler(self, event=None):
         if self.ready and self.server != None:
             self.process(self.box.output())
