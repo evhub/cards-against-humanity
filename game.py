@@ -105,7 +105,6 @@ class main(serverbase):
             self.hand = map(card, self.receive().split(";;"))
         self.app.display("Loaded.")
         self.black = None
-        self.played = []
         self.phased = False
         self.waiting = False
         self.onsent("end", self.endwait)
@@ -114,7 +113,7 @@ class main(serverbase):
         self.onsent("score", self.replyscore)
         self.onsent("pick", self.pickwait)
         if self.server:
-            self.broadcast("Connected players are: '"+strlist(self.names.keys(), "', '")+"'.")
+            self.broadcast("Connected players are: '"+strlist(self.names.values(), "', '")+"'.")
         self.app.display("You just drew: '"+strlist(self.hand, "', '")+"'.")
         self.endturn(False)
         self.ready = True
@@ -166,7 +165,6 @@ class main(serverbase):
             else:
                 self.app.display("The Card Czar is making their choice.")
                 self.phased = False
-                self.played = []
             self.waiting = "end"
         return True
     def pickwait(self, arg="", a=None):
@@ -194,6 +192,7 @@ class main(serverbase):
     def replyscore(self, arg="", a=None):
         self.send(str(arg)+str(self.scores[a]), a)
     def endturn(self, send=True):
+        self.played = []
         if self.server == None:
             return False
         else:
@@ -218,7 +217,6 @@ class main(serverbase):
                 if send:
                     self.czar = self.receive() == "!"
             self.waiting = "phase"
-            self.played = []
             return True
     def handler(self, event=None):
         if self.ready and self.server != None:
@@ -260,7 +258,6 @@ class main(serverbase):
                             self.broadcast("An awesome point was awarded to '"+self.names[self.played[original]]+"' for ('"+strlist(original.split("; "), "', '")+"').")
                         else:
                             self.trigger("pick", original, toall=False)
-                        self.played = []
                         self.trigger("end")
         elif foriginal.startswith("play "):
             original = original[5:]
