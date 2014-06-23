@@ -134,7 +134,7 @@ class main(serverbase):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
                         self.played[strlist(m, ";;")] = a
-                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+"'.")
+                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "('"+strlist(m.split(";;"), "', '")+"')")+".")
                 played = {}
                 for m,a in self.played.items():
                     played[strlist(m.split(";;"), "; ")] = a
@@ -164,11 +164,9 @@ class main(serverbase):
                 if self.server:
                     choice = self.receive()
                     self.scores[self.played[choice]] += 1
-                    self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"'.")
+                    self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"' for ('"+strlist(choice.split("; "), "', '")+"').")
                 self.played = None
-                self.waiting = "end"
-            else:
-                self.waiting = None
+            self.waiting = "end"
         return True
     def endwait(self, arg="", a=None):
         if self.waiting == "end":
@@ -209,10 +207,7 @@ class main(serverbase):
                 self.black = card(self.receive())
                 if send:
                     self.czar = self.receive() == "!"
-            if self.isczar():
-                self.waiting = "phase"
-            else:
-                self.waiting = None
+            self.waiting = "phase"
             return True
     def handler(self, event=None):
         if self.ready and self.server != None:
@@ -232,7 +227,7 @@ class main(serverbase):
                     self.app.display("You can't pick yet, you're still in the playing stage.")
                 elif not self.isczar():
                     self.app.display("You're not the Card Czar, so you're playing, not picking.")
-                elif self.waiting:
+                elif self.waiting != "end":
                     self.app.display("You have to wait for others until you can pick.")
                 elif not self.played:
                     self.app.display("You can't pick multiple people's cards.")
@@ -266,7 +261,7 @@ class main(serverbase):
                     self.app.display("You can't play yet, you're still in the picking stage.")
                 elif self.isczar():
                     self.app.display("You're the Card Czar, so you're picking, not playing.")
-                elif self.waiting:
+                elif self.waiting != "phase":
                     self.app.display("You have to wait for others until you can play.")
                 elif len(self.played) >= self.black.blanks:
                     self.app.display("You can't play anymore cards this turn.")
