@@ -179,21 +179,15 @@ class main(serverbase):
             self.broadcast("An awesome point was awarded to '"+self.names[self.played[arg]]+"' for ('"+strlist(arg.split("; "), "', '")+"').")
             self.trigger("end")
             self.sendscores()
-        else:
-            self.nokey("pick", arg, a)
     def endwait(self, arg="", a=None):
         if self.waiting == "end":
             self.endturn()
-        else:
-            self.nokey("end", arg, a)
     def phasewait(self, arg="", a=None):
         if self.waiting == "phase":
             if not a in self.didphase:
                 self.didphase.append(a)
             if len(self.didphase) >= len(self.c.c):
                 self.trigger("phase2")
-        else:
-            self.nokey("phase", arg, a)
     def replyscore(self, arg="", a=None):
         self.send(str(arg)+str(self.scores[a]), a)
     def endturn(self, send=True):
