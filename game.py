@@ -154,18 +154,19 @@ class main(serverbase):
                     self.send("$")
                 if self.czar:
                     self.played = self.receive().split(";;")
-                    self.app.display("Make your choice, Card Czar.")
                 else:
                     drew = map(card, self.receive().split(";;"))
                     self.hand.extend(drew)
                     self.app.display("You just drew: '"+strlist(drew, "', '")+"'.")
-            if not self.isczar():
+            if self.isczar():
+                self.app.display("Make your choice, Card Czar.")
+            else:
                 self.phased = False
                 if self.server:
                     choice = self.receive()
                     self.scores[self.played[choice]] += 1
                     self.broadcast("An awesome point was awarded to '"+self.names[self.played[choice]]+"' for ('"+strlist(choice.split("; "), "', '")+"').")
-            self.played = []
+                self.played = []
             self.waiting = "end"
         return True
     def endwait(self, arg="", a=None):
