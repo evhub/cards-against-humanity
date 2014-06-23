@@ -110,6 +110,7 @@ class main(serverbase):
         self.waiting = False
         self.onsent("end", self.endwait)
         self.onsent("phase", self.phasewait)
+        self.onsent("score", self.replyscore)
         self.endturn(False)
         self.ready = True
     def phaseturn(self):
@@ -175,6 +176,9 @@ class main(serverbase):
             self.phaseturn()
         else:
             self.nokey("phase", arg, a)
+    def replyscore(self, arg="", a=None):
+        
+        self.send(str(arg)+str(self.scores[a]), a)
     def endturn(self, send=True):
         if self.server == None:
             return False
@@ -280,7 +284,7 @@ class main(serverbase):
             if self.server:
                 points = self.scores[None]
             else:
-                self.send("%%")
+                self.trigger("score", toall=False)
                 points = self.receive()
             self.app.display("You currently have "+str(points)+" awesome points.")
         elif foriginal == "hand":
@@ -289,23 +293,6 @@ class main(serverbase):
             self.textmsg(original[4:])
         elif original:
             self.textmsg(original)
-    def addsent(self, item):
-        if self.server:
-            item, a = item
-            if item.startswith("+:"):
-                self.broadcast(item[2:], exempt=a)
-            elif item == "%%":
-                self.send(str(self.scores[a]), a)
-            else:
-                self.sent[a].append(item)
-        elif self.server != None:
-            if item.startswith("+:"):
-                self.app.display(item[2:])
-            else:
-                self.sent.append(item)
-        else:
-            return False
-        return True
     def isczar(self):
         if self.server:
             return self.x == 0
