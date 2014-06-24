@@ -78,7 +78,7 @@ def getcards(filenames, black=False):
             for line in readfile(f).splitlines():
                 line = basicformat(line)
                 if line and not (line.startswith("#") or line.endswith(":")):
-                    if line[-1] not in [".", "?", "!", '"']:
+                    if line[-1] not in [".", "?", "!", '"', '"']:
                         line += "."
                     line = basicformat(line).replace("\\n", "\n")
                     cards.append(card(line))
