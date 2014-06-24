@@ -219,10 +219,10 @@ class main(serverbase):
                 else:
                     for a in self.c.c:
                         self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
-                out = "The cards played were:"
+                out = "\nThe cards played were:\n"
                 keys = self.played.keys()
                 for x in xrange(1, len(keys)+1):
-                    out += "\n"+str(x)+". "+strlist(keys[x-1].split(";;"), "; ")
+                    out += str(x)+". "+strlist(keys[x-1].split(";;"), "; ")+"\n"
                 self.broadcast(out)
             else:
                 if self.played:
