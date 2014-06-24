@@ -60,7 +60,7 @@ class card(object):
                     inside = False
     def black(self):
         if self.blanks == 0:
-            self.blanks += 1
+            self.blanks = 1
     def __str__(self):
         out = self.text
         if self.blanks > 0:
@@ -120,29 +120,7 @@ class main(serverbase):
 
         self.show = self.app.display
         self.speed = int(speed)
-        self.server = bool(formatisno(popup("Question", "Client(Y) or Server(n)?")))
-        if not self.server:
-            self.host = None
-            while not self.host:
-                self.host = popup("Entry", "Host?") or "local"
-                if not (self.host == "local" or ("." in self.host and not madeof(self.host, "."))):
-                    popup("Error", "That isn't a valid host name. Please try again.")
-                    self.host = None
-            if ":" in self.host:
-                self.host, port = self.host.rsplit(":", 1)
-        self.port = int(port)
-        self.app.display("Initialized.")
-        if self.server:
-            self.number = 0
-            while self.number <= 0:
-                self.number = popup("Integer", "Number of clients?")
-            self.names = {None: popup("Entry", "Name?") or "Host"}
-            self.app.display("Waiting For Connections...")
-        else:
-            self.name = popup("Entry", "Name?") or "Guest"
-            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nTo prevent server/client desynchronization, you should not click OK on this popup until your host tells you to.")
-            self.app.display("Connecting...")
-        self.register(self.connect, 200)
+        self.boot(port)
 
     def getwhites(self, count=1):
         self.whites, out = self.gen.take(self.whites, count)
@@ -157,9 +135,7 @@ class main(serverbase):
         self.gen = random()
         if self.server:
             self.whites = getcards(self.whites)
-            self.printdebug("A#: "+str(len(self.whites)))
             self.blacks = getcards(self.blacks, True)
-            self.printdebug("Q#: "+str(len(self.blacks)))
             self.scores = {None:0}
             for a in self.c.c:
                 self.queue[a].append(strlist(self.getwhites(self.cards), ";;"))
@@ -170,7 +146,7 @@ class main(serverbase):
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
-        self.app.display("Loaded.")
+        self.app.display("Loaded with "+str(len(self.blacks))+" black cards and "+str(len(self.whites))+" white cards.")
         self.black = None
         self.phased = False
         self.waiting = False
