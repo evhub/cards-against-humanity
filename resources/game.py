@@ -102,19 +102,19 @@ class main(serverbase):
         rootbind(self.root, self.disconnect)
         self.root.title(str(name))
 
-        self.frameA = Tkinter.Frame(self.root, height=35, width=60)
+        self.frameA = Tkinter.Frame(self.root, height=30, width=60)
         self.frameA.pack(side="left")
-        self.app = console(self.frameA, message, height=34, width=60)
+        self.app = console(self.frameA, message, height=29, width=60)
         self.app.dobind()
         self.box = entry(self.app, width=60)
         self.box.dobind(self.handler)
 
-        self.frameB = Tkinter.Frame(self.root, height=35, width=40)
+        self.frameB = Tkinter.Frame(self.root, height=30, width=60)
         self.frameB.pack(side="right")
-        self.extrainfo = console(self.frameB, None, height=3, width=40)
-        self.extrainfo.dobind()
-        self.info = console(self.frameB, None, height=32, width=40, side="top")
+        self.info = console(self.frameB, None, height=25, width=60)
         self.info.dobind()
+        self.extrainfo = console(self.frameB, None, height=5, width=60, side="top")
+        self.extrainfo.dobind()
 
         self.show = self.app.display
         self.speed = int(speed)
@@ -202,11 +202,6 @@ class main(serverbase):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
                         self.played[strlist(m, ";;")] = a
-                out = "The cards played were:"
-                keys = self.played.keys()
-                for x in xrange(1, len(keys)+1):
-                    out += "\n"+str(x)+". "+strlist(keys[x-1].split(";;"), "; ")
-                self.broadcast(out)
                 played = {}
                 for m,a in self.played.items():
                     played[strlist(m.split(";;"), "; ")] = a
@@ -222,6 +217,11 @@ class main(serverbase):
                 else:
                     for a in self.c.c:
                         self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
+                out = "The cards played were:"
+                keys = self.played.keys()
+                for x in xrange(1, len(keys)+1):
+                    out += "\n"+str(x)+". "+strlist(keys[x-1].split(";;"), "; ")
+                self.broadcast(out)
             else:
                 if self.played:
                     self.send(strlist(self.played, ";;"))
@@ -311,8 +311,9 @@ class main(serverbase):
         self.extrainfo.clear("Q: "+str(self.black))
         out = ""
         for x in xrange(1, len(self.hand)+1):
-            out += str(x)+". "+str(self.hand[x-1])+"\n"
-        self.info.clear(out[:-1])
+            out += str(x)+". "+str(self.hand[x-1])+"\n\n"
+        out = out[:-2]+"\n"*(22-self.cards*2)
+        self.info.clear(out)
 
     def handler(self, event=None):
         if self.ready and self.server != None:
@@ -332,7 +333,11 @@ class main(serverbase):
                 self.app.display("That's not a valid card index.")
             else:
                 if testnum:
-                    original = str(self.played.keys()[int(-1+testnum)])
+                    if self.server:
+                        played = self.played.keys()
+                    else:
+                        played = self.played
+                    original = str(played[int(-1+testnum)])
                 if not self.phased:
                     self.app.display("You can't pick yet, you're still in the playing stage.")
                 elif not self.isczar():
