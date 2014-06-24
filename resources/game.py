@@ -79,7 +79,7 @@ def getcards(filenames, black=False):
             for line in readfile(f).splitlines():
                 line = basicformat(line)
                 if line and not (line.startswith("#") or line.endswith(":")):
-                    if line[-1] == ".":
+                    if not black and line[-1] == ".":
                         line = line[:-1]
                     line = basicformat(line).replace("\\n", "\n")
                     cards.append(card(line))
@@ -288,7 +288,7 @@ class main(serverbase):
                 self.didphase = []
                 self.x += 1
                 self.x %= len(self.order)
-                self.broadcast("The Card Czar is: "+self.names[self.order[self.x]]+".")
+                self.broadcast("\nThe Card Czar is: "+self.names[self.order[self.x]]+".")
                 if self.black:
                     self.blacks.append(self.black)
                 self.black = self.getblacks()[0]
@@ -326,7 +326,7 @@ class main(serverbase):
         original = basicformat(inputstring)
         foriginal = superformat(original)
         if foriginal == "help":
-            self.app.display("The available commands are: pick, play, score, hand, say")
+            self.app.display("The available commands are: help, pick, play, score, hand, say, clear")
         elif foriginal.startswith("pick "):
             original = original[5:]
             testnum = isreal(original)
@@ -416,6 +416,8 @@ class main(serverbase):
             self.app.display("You currently have "+str(points)+" awesome points.")
         elif foriginal == "hand":
             self.app.display("Your hand contains: "+strlist(self.hand, "; "))
+        elif foriginal == "clear":
+            self.app.clear("Display cleared.")
         elif foriginal.startswith("say "):
             self.textmsg(original[4:])
         elif original:
