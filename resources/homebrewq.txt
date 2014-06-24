@@ -40,10 +40,10 @@ Tonight, on Industrial Alchemist: _. NOOO.
 Did you bring a _? NOOO.
 Goddamn Empedocles, always stealing my _.
 I try to live by the code of "What would _ do?"
-"My daughter is dying."\n"I know, I have her in my _."
+"My daughter is dying."\n"Yes, I know, I have her in my _."
 Commit: Fixes _.
 An epic rap battle between _ and _.
-In JavaScript, empty array + empty array equals _.
+In JavaScript, empty array + empty array = _.
 The destruction of Pompeii was actually caused by _.
 Mordecai's bandits are known for their _.
 _ + _ would make a great character duo.
