@@ -44,7 +44,7 @@ I try to live by the code of "What would _ do?"
 Commit: Fixes _.
 An epic rap battle between _ and _.
 In JavaScript, empty array + empty array equals _.
-The destruction of Pompey was actually caused by _.
+The destruction of Pompeii was actually caused by _.
 Mordecai's bandits are known for their _.
 _ + _ would make a great character duo.
 Thanks, _-bama.
@@ -62,4 +62,4 @@ The truth exists beyond the _.
 The internet is for _.
 I've contracted a mild case of _. 
 Well, we did the math. Turns out the sum of all natural numbers is actually _.
-
+_ would fit right in with the good party. 
