@@ -102,18 +102,18 @@ class main(serverbase):
         rootbind(self.root, self.disconnect)
         self.root.title(str(name))
 
-        self.frameA = Tkinter.Frame(self.root, height=36, width=60)
+        self.frameA = Tkinter.Frame(self.root, height=35, width=60)
         self.frameA.pack(side="left")
-        self.app = console(self.frameA, message, height=35, width=60)
+        self.app = console(self.frameA, message, height=34, width=60)
         self.app.dobind()
         self.box = entry(self.app, width=60)
         self.box.dobind(self.handler)
 
-        self.frameB = Tkinter.Frame(self.root, height=36, width=40)
+        self.frameB = Tkinter.Frame(self.root, height=35, width=40)
         self.frameB.pack(side="right")
-        self.info = console(self.frameB, None, height=30, width=40)
+        self.info = console(self.frameB, None, height=25, width=40)
         self.info.dobind()
-        self.topinfo = console(self.frameB, None, height=5, width=60, side="top")
+        self.topinfo = console(self.frameB, None, height=10, width=40, side="top")
         self.topinfo.dobind()
 
         self.show = self.app.display
@@ -294,10 +294,12 @@ class main(serverbase):
             return True
     def newinfo(self):
         self.topinfo.clear("Q: "+str(self.black))
-        self.info.clear("Hand:\n"+strlist(self.hand, "\n"))
+        self.info.clear(strlist(self.hand, "\n"))
     def handler(self, event=None):
         if self.ready and self.server != None:
-            self.process(self.box.output())
+            original = self.box.output()
+            self.box.add(original)
+            self.process(original)
     def process(self, inputstring):
         original = basicformat(inputstring)
         foriginal = superformat(original)
