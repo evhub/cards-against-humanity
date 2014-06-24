@@ -118,14 +118,14 @@ class main(serverbase):
 
         self.show = self.app.display
         self.speed = int(speed)
-        self.server = bool(formatisno(popup("Question", "Client(Y) or Server(n)?")))
+        self.server = bool(isno(popup("Question", "Client(Y) or Server(n)?")))
         if not self.server:
             self.host = None
             while not self.host:
-                self.host = popup("Entry", "Host?")
-                if "." not in self.host and self.host != "local":
+                self.host = popup("Entry", "Host?") or "local"
+                if not (self.host == "local" or ("." in self.host and not madeof(self.host, "."))):
                     popup("Error", "That isn't a valid host name. Please try again.")
-                    self.host = ""
+                    self.host = None
             if ":" in self.host:
                 self.host, port = self.host.rsplit(":", 1)
         self.port = int(port)
@@ -141,12 +141,15 @@ class main(serverbase):
             popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nTo prevent server/client desynchronization, you should not click OK on this popup until your host tells you to.")
             self.app.display("Connecting...")
         self.register(self.connect, 200)
+
     def getwhites(self, count=1):
         self.whites, out = self.gen.take(self.whites, count)
         return out
+
     def getblacks(self, count=1):
         self.blacks, out = self.gen.take(self.blacks, count)
         return out
+
     def begin(self):
         self.printdebug(": BEGIN")
         self.gen = random()
@@ -179,6 +182,7 @@ class main(serverbase):
         self.app.display("You just drew: "+strlist(self.hand, ", ")+".")
         self.endturn(False)
         self.ready = True
+
     def phaseturn(self, arg="", a=None):
         self.phased = True
         if self.server == None:
@@ -233,12 +237,14 @@ class main(serverbase):
                 self.phased = False
             self.waiting = "end"
         return True
+
     def sendscores(self):
         out = []
         for a in self.scores:
             name = self.names[a]
             out.append(""+name+" ("+str(self.scores[a])+")")
         self.broadcast("The current awesome point totals are: "+strlist(out, ", ")+".")
+
     def pickwait(self, arg="", a=None):
         if self.waiting == "end":
             arg = str(arg)
@@ -248,11 +254,13 @@ class main(serverbase):
             self.sendscores()
         else:
             self.printdebug("ERROR: Tried triggering pick when not waiting for it.")
+    
     def endwait(self, arg="", a=None):
         if self.waiting == "end":
             self.endturn()
         else:
             self.printdebug("ERROR: Tried triggering end when not waiting for it.")
+
     def phasewait(self, arg="", a=None):
         if self.waiting == "phase":
             if not a in self.didphase:
@@ -261,8 +269,10 @@ class main(serverbase):
                 self.trigger("phase2")
         else:
             self.printdebug("ERROR: Tried triggering phase when not waiting for it.")
+
     def replyscore(self, arg="", a=None):
         self.send(str(arg)+str(self.scores[a]), a)
+
     def endturn(self, send=True):
         self.played = []
         if self.server == None:
@@ -292,14 +302,17 @@ class main(serverbase):
             self.newinfo()
             self.waiting = "phase"
             return True
+
     def newinfo(self):
         self.topinfo.clear("Q: "+str(self.black))
         self.info.clear(strlist(self.hand, "\n"))
+
     def handler(self, event=None):
         if self.ready and self.server != None:
             original = self.box.output()
             self.box.add(original)
             self.process(original)
+
     def process(self, inputstring):
         original = basicformat(inputstring)
         foriginal = superformat(original)
@@ -393,6 +406,7 @@ class main(serverbase):
             self.textmsg(original[4:])
         elif original:
             self.textmsg(original)
+
     def isczar(self):
         if self.server:
             return self.x == 0
