@@ -29,6 +29,7 @@ Group Jokes:
 	Bad puns.
 	Keyboard cat.
 	Stupid o'clock.
+	Bread.
 
 Pathfinder:
 	Brew's Lie.
@@ -76,6 +77,7 @@ Pathfinder:
 	One-shotting the final boss.
 	Flaming shuriken.
 	Celestial muffins.
+	A magic oven.
 
 Anime:
 	Unlimited airplane works.
@@ -93,6 +95,7 @@ Anime:
 	DING! DING! DING! DING! DING! DING! DING! DING! DING!
 	D-Mail.
 	Gilgamesh.
+	Mad scientistu.
 
 Games:
 	G-Man.
