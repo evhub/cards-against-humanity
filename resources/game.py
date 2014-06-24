@@ -202,7 +202,11 @@ class main(serverbase):
                             m = map(card, m.split(";;"))
                         self.whites.extend(m)
                         self.played[strlist(m, ";;")] = a
-                self.broadcast("The cards played were: "+strlist(self.played.keys(), ", ", lambda m: "("+strlist(m.split(";;"), "; ")+")")+".")
+                out = "The cards played were:"
+                keys = self.played.keys()
+                for x in xrange(1, len(keys)+1):
+                    out += "\n"+str(x)+". "+strlist(keys[x-1].split(";;"), "; ")
+                self.broadcast(out)
                 played = {}
                 for m,a in self.played.items():
                     played[strlist(m.split(";;"), "; ")] = a
@@ -305,7 +309,10 @@ class main(serverbase):
 
     def newinfo(self):
         self.extrainfo.clear("Q: "+str(self.black))
-        self.info.clear(strlist(self.hand, "\n"))
+        out = ""
+        for x in xrange(1, len(self.hand)+1):
+            out += str(x)+". "+str(self.hand[x-1])+"\n"
+        self.info.clear(out[:-1])
 
     def handler(self, event=None):
         if self.ready and self.server != None:
@@ -325,7 +332,7 @@ class main(serverbase):
                 self.app.display("That's not a valid card index.")
             else:
                 if testnum:
-                    original = str(self.played.keys()[int(1+testnum)])
+                    original = str(self.played.keys()[int(-1+testnum)])
                 if not self.phased:
                     self.app.display("You can't pick yet, you're still in the playing stage.")
                 elif not self.isczar():
@@ -360,7 +367,7 @@ class main(serverbase):
                 self.app.display("That's not a valid card index.")
             else:
                 if testnum:
-                    original = str(self.hand[int(1+testnum)])
+                    original = str(self.hand[int(-1+testnum)])
                 if self.phased:
                     self.app.display("You can't play yet, you're still in the picking stage.")
                 elif self.isczar():
@@ -393,6 +400,7 @@ class main(serverbase):
                             self.schedule(self.phasewait)
                         else:
                             self.trigger("phase1", toall=False)
+                        self.newinfo()
         elif foriginal == "score":
             if self.server:
                 points = self.scores[None]
