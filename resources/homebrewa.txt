@@ -27,6 +27,8 @@ Group Jokes:
 	Blackberry Izze.
 	Purposefully messing up formatting.
 	Bad puns.
+	Keyboard cat.
+	Stupid o'clock.
 
 Pathfinder:
 	Brew's Lie.
@@ -91,6 +93,20 @@ Anime:
 	DING! DING! DING! DING! DING! DING! DING! DING! DING!
 	D-Mail.
 	Gilgamesh.
+
+Games:
+	G-Man.
+	The Scout.
+	The Soldier.
+	The Pyro.
+	The Demoman.
+	The Heavy.
+	The Engineer.
+	The Medic.
+	The Sniper.
+	The Spy.
+	A portal gun.
+	Pyrovision.
 
 Other Shows:
 	Twan.
