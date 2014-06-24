@@ -34,7 +34,8 @@ from rabbit.all import (
     rootbind,
     formatisyes,
     formatisno,
-    madeof
+    madeof,
+    containsany
     )
 import re
 
@@ -79,7 +80,7 @@ def getcards(filenames, black=False):
             for line in readfile(f).splitlines():
                 line = basicformat(line)
                 if line and not (line.startswith("#") or line.endswith(":")):
-                    if not black and line[-1] == ".":
+                    if not black and line[-1] == "." and not containsany(line[:-1], ["!", "?", "."]):
                         line = line[:-1]
                     line = basicformat(line).replace("\\n", "\n")
                     cards.append(card(line))
@@ -328,7 +329,7 @@ class main(serverbase):
         if foriginal == "help":
             self.app.display("The available commands are: help, pick, play, score, hand, say, clear")
         elif foriginal.startswith("pick "):
-            original = original[5:]
+            original = basicformat(original[5:])
             testnum = isreal(original)
             if testnum and (testnum <= 0 or testnum > len(self.played) or testnum != int(testnum)):
                 self.app.display("That's not a valid card index.")
@@ -367,7 +368,7 @@ class main(serverbase):
                         if self.server:
                             self.sendscores()
         elif foriginal.startswith("play "):
-            original = original[5:]
+            original = basicformat(original[5:])
             testnum = isreal(original)
             if testnum and (testnum <= 0 or testnum > len(self.hand) or testnum != int(testnum)):
                 self.app.display("That's not a valid card index.")
