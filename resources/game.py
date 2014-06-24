@@ -33,7 +33,8 @@ from rabbit.all import (
     entry,
     rootbind,
     formatisyes,
-    formatisno
+    formatisno,
+    madeof
     )
 import re
 
