@@ -78,8 +78,8 @@ def getcards(filenames, black=False):
             for line in readfile(f).splitlines():
                 line = basicformat(line)
                 if line and not (line.startswith("#") or line.endswith(":")):
-                    if line[-1] not in [".", "?", "!", '"', "'"]:
-                        line += "."
+                    if line[-1] == ".":
+                        line = line[:-1]
                     line = basicformat(line).replace("\\n", "\n")
                     cards.append(card(line))
                     if black:
@@ -179,7 +179,7 @@ class main(serverbase):
         self.onsent("pick", self.pickwait)
         if self.server:
             self.broadcast("Connected players are: "+strlist(self.names.values(), ", ")+".")
-        self.app.display("You just drew: "+strlist(self.hand, ", ")+".")
+        self.app.display("You just drew: "+strlist(self.hand, "; "))
         self.endturn(False)
         self.ready = True
 
@@ -214,7 +214,7 @@ class main(serverbase):
                             self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
                     drew = self.getwhites(self.black.blanks)
                     self.hand.extend(drew)
-                    self.app.display("You just drew: "+strlist(drew, "; ")+".")
+                    self.app.display("You just drew: "+strlist(drew, "; "))
                 else:
                     for a in self.c.c:
                         self.queue[a].append(strlist(self.getwhites(self.black.blanks), ";;"))
@@ -228,7 +228,7 @@ class main(serverbase):
                 else:
                     drew = map(card, self.receive().split(";;"))
                     self.hand.extend(drew)
-                    self.app.display("You just drew: "+strlist(drew, "; ")+".")
+                    self.app.display("You just drew: "+strlist(drew, "; "))
             self.newinfo()
             if self.isczar():
                 self.app.display("Make your choice, Card Czar.")
@@ -298,7 +298,7 @@ class main(serverbase):
                 self.black = card(self.receive())
                 if send:
                     self.czar = self.receive() == "!"
-            self.app.display("The Black Card is: "+str(self.black)+".")
+            self.app.display("The Black Card is: "+str(self.black))
             self.newinfo()
             self.waiting = "phase"
             return True
@@ -385,7 +385,7 @@ class main(serverbase):
                             self.app.display("You can't play a card that you don't have in your hand.")
                     else:
                         self.played.append(original)
-                        self.app.display("You just played: "+str(self.played[-1])+".")
+                        self.app.display("You just played: "+str(self.played[-1]))
                         self.hand.remove(self.played[-1])
                         if len(self.played) < self.black.blanks:
                             self.app.display("You still have "+str(self.black.blanks-len(self.played))+" more cards to play.")
@@ -401,7 +401,7 @@ class main(serverbase):
                 points = self.receive()
             self.app.display("You currently have "+str(points)+" awesome points.")
         elif foriginal == "hand":
-            self.app.display("Your hand contains: "+strlist(self.hand, "; ")+".")
+            self.app.display("Your hand contains: "+strlist(self.hand, "; "))
         elif foriginal.startswith("say "):
             self.textmsg(original[4:])
         elif original:
