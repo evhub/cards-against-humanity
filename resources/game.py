@@ -111,10 +111,10 @@ class main(serverbase):
 
         self.frameB = Tkinter.Frame(self.root, height=35, width=40)
         self.frameB.pack(side="right")
-        self.info = console(self.frameB, None, height=25, width=40)
+        self.extrainfo = console(self.frameB, None, height=3, width=40)
+        self.extrainfo.dobind()
+        self.info = console(self.frameB, None, height=32, width=40, side="top")
         self.info.dobind()
-        self.topinfo = console(self.frameB, None, height=10, width=40, side="top")
-        self.topinfo.dobind()
 
         self.show = self.app.display
         self.speed = int(speed)
@@ -304,7 +304,7 @@ class main(serverbase):
             return True
 
     def newinfo(self):
-        self.topinfo.clear("Q: "+str(self.black))
+        self.extrainfo.clear("Q: "+str(self.black))
         self.info.clear(strlist(self.hand, "\n"))
 
     def handler(self, event=None):
