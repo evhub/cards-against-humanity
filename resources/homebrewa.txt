@@ -45,7 +45,7 @@ Group Jokes:
 	Show tunes. 
 	Lemons.
 
-Pathfinder:
+DnD:
 	Brew's Lie.
 	Constant vigilance.
 	The Buttcheek of Love and Reason.
@@ -95,7 +95,9 @@ Pathfinder:
 	A ferret-sized Crimson Typhoon.
 	Manischevitz.
 	Gefilte fish, "swimming" in a pool.
-	A universe where equilateral right triangles are possible. 
+	A universe where equilateral right triangles are possible.
+	B.I.S.C.U.I.T.
+	K.E.R.S.P.L.A.T.
 
 Anime:
 	Unlimited airplane works.
