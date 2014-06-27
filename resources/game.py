@@ -123,19 +123,23 @@ class main(serverbase):
         self.boot(port)
 
     def getwhites(self, count=1):
-        self.whites, out = self.gen.take(self.whites, count)
+        count = int(count)
+        out = self.whites[:count]
+        self.whites = self.whites[count:]
         return out
 
     def getblacks(self, count=1):
-        self.blacks, out = self.gen.take(self.blacks, count)
+        count = int(count)
+        out = self.blacks[:count]
+        self.blacks = self.blacks[count:]
         return out
 
     def begin(self):
         self.printdebug(": BEGIN")
-        self.gen = random()
+        gen = random()
         if self.server:
-            self.whites = getcards(self.whites)
-            self.blacks = getcards(self.blacks, True)
+            self.whites = gen.scramble(getcards(self.whites))
+            self.blacks = gen.scramble(getcards(self.blacks, True))
             self.scores = {None:0}
             for a in self.c.c:
                 self.queue[a].append(strlist(self.getwhites(self.cards), ";;"))
