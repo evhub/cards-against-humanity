@@ -39,6 +39,11 @@ from rabbit.all import (
     )
 import re
 
+try:
+    import hackergen
+except:
+    hackergen = None
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -121,6 +126,12 @@ class main(serverbase):
         self.show = self.app.display
         self.speed = int(speed)
         self.boot(port)
+
+    def readywarn(self):
+        if hackergen:
+            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nIf you click on this popup before your host tells you to, "+hackergen.getPhrase())
+        else:
+            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nTo prevent server/client desynchronization, you should not click OK on this popup until your host tells you to.")
 
     def getwhites(self, count=1):
         count = int(count)
