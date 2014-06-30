@@ -35,9 +35,9 @@ from rabbit.all import (
     formatisyes,
     formatisno,
     madeof,
-    containsany
+    containsany,
+    re
     )
-import re
 
 try:
     import hackergen
