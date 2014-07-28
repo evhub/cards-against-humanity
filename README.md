@@ -11,11 +11,11 @@ An extensible Cards Against Humanity game engine.
 	* https://github.com/evhub/rabbit/releases/latest
 3. Drag the "rabbit" folder into the "resources" folder
 4. Run the CardGame executable file:
-	* "CardGame" on Unix
 	* "CardGame.bat" on Windows
+	* "CardGame" on Unix (Mac, Linux, etc.)
 
 ## Hackergen Support:
 
 1. Clone Hacker Phrase Gen:
 	* https://github.com/evhub/hacker-phrase-generator
-2. Copy the "hackergen" folder into "resources"
+2. Copy the "hackergen" folder into the "resources" folder
