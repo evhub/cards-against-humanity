@@ -12,7 +12,7 @@ People:
 	Abraham Lincoln.
 	Mr. T.
 	Mitt Romney.
-Stephen Hawking, upon his majestic hawk-throne.
+	Stephen Hawking, upon his majestic hawk-throne.
 
 Group Jokes:
 	Tobin's spine.
@@ -26,8 +26,6 @@ Group Jokes:
 	Leg spines.
 	Too many INTJs.
 	Billies.
-	Yudkowsky.
-	Harry Potter and the Methods of Rationality.
 	Blackberry Izze.
 	Purposefully messing up formatting.
 	Bad puns.
@@ -49,6 +47,8 @@ Group Jokes:
 	A pirate ship with legs.
 	The button that calls the Secret Service.
 	The Putinmobile.
+	Barbara Boxer's bloody, half-eaten corpse.
+	Invading the Congo.
 
 DnD:
 	Brew's Lie.
@@ -161,7 +161,6 @@ Other Shows:
 
 Politics, Math, Science, and History:
 	Canadians.
-	Bayes' Theorem.
 	Capitalism.
 	Quantum Mechanics.
 	The Schrodinger Wave Equation.
