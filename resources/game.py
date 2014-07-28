@@ -84,6 +84,13 @@ class card(object):
                 self.text += c
         else:
             self.text = out
+        self.check()
+
+    def check(self):
+        if self.text:
+            self.text = self.text[0].upper()+self.text[1:]
+        else:
+            raise ValueError("Cannot have an empty card.")
 
     def phrasesub(self, text):
         out = ""
