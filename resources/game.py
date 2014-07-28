@@ -53,26 +53,40 @@ else:
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def getPhrase(*args, **kwargs):
+    out = hackergen.getPhrase(*args, **kwargs)
+    if out.endswith("."):
+        out = out[:-1]
+    return out
+
 class card(object):
-    def __init__(self, text):
+    def __init__(self, text, scan=False):
         if hackergen:
-            self.text = self.phrasesub(text)
+            out = self.phrasesub(text)
         else:
-            self.text = str(text)
-        if re.compile(r".* \(\d+\)").match(self.text):
-            self.text, self.blanks = self.text.rsplit(" (", 1)
+            out = str(text)
+        self.blanks = 0
+        if re.compile(r".* \(\d+\)").match(out):
+            out, self.blanks = out.rsplit(" (", 1)
             self.blanks = int(self.blanks[:-1])
-        else:
-            self.blanks = 0
+        elif scan:
+            self.text = ""
             inside = False
-            for c in self.text:
+            for c in out:
                 if c != "_":
                     inside = False
                 elif not inside:
-                    self.blanks += 1
-                    inside = True
+                    if len(self.text) != 0 and self.text[-1] == "\\":
+                        self.text = self.text[:-1]
+                    else:
+                        self.blanks += 1
+                        inside = True
+                self.text += c
+        else:
+            self.text = out
+
     def phrasesub(self, text):
-        self.text = ""
+        out = ""
         inside = False
         for c in str(text):
             if inside:
@@ -91,7 +105,7 @@ class card(object):
                                 done = True
                         if done is not None:
                             if not parts[1]:
-                                self.text += hackergen.getPhrase()
+                                out += getPhrase()
                                 inside = False
                             else:
                                 try:
@@ -99,32 +113,39 @@ class card(object):
                                 except ValueError:
                                     inside = parts[1]
                                 else:
-                                    self.text += hackergen.getPhrase(num)
+                                    out += getPhrase(num)
                                     inside = False
                             if done:
                                 hackergen.tense("fut")
                     if inside is not False:
-                        self.text += "{"+inside+"}"
+                        out += "{"+inside+"}"
                         inside = False
                 elif inside is True:
                     inside = c
                 else:
                     inside += c
             elif c == "{":
-                if len(self.text) != 0 and self.text[-1] == "\\":
-                    self.text = self.text[:-1]+c
+                if len(out) != 0 and out[-1] == "\\":
+                    out = out[:-1]+c
                 else:
                     inside = True
             else:
-                self.text += c
+                out += c
+        return out
+
     def black(self):
         if self.blanks == 0:
             self.blanks = 1
+
+    def white(self):
+        self.blanks = 0
+
     def __str__(self):
         out = self.text
         if self.blanks > 0:
             out += " ("+str(self.blanks)+")"
         return out
+
     def __eq__(self, other):
         if isinstance(other, card):
             return self.text == other.text and self.blanks == other.blanks
@@ -141,10 +162,12 @@ def getcards(filenames, black=False):
                 if line and not (line.startswith("#") or line.endswith(":")):
                     if not black and line[-1] == "." and not containsany(line[:-1], ["!", "?", "."]):
                         line = line[:-1]
-                    line = basicformat(line).replace("\\n", "\n")
-                    cards.append(card(line))
+                    line = basicformat(line).replace("\\n", "\n").replace("\\\n", "\\n")
+                    cards.append(card(line), black)
                     if black:
                         cards[-1].black()
+                    else:
+                        cards[-1].white()
         except IOError:
             pass
         else:
@@ -192,7 +215,7 @@ class main(serverbase):
 
     def readywarn(self):
         if hackergen:
-            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nIf you click on this popup before your host tells you to, "+hackergen.getPhrase())
+            popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nIf you click on this popup before your host tells you to, "+getPhrase()+"!")
         else:
             popup("Warning", "DO NOT PROCEED UNTIL TOLD!\nTo prevent server/client desynchronization, you should not click OK on this popup until your host tells you to.")
 
