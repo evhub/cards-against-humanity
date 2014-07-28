@@ -1,0 +1,2 @@
+When {act:1}.
+What would happen if {pas:1}.

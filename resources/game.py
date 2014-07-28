@@ -96,7 +96,7 @@ class card(object):
                     parts = inside.split(":")
                     if len(parts) == 2:
                         done = False
-                        if parts[0] != "fut":
+                        if parts[0] and parts[0] != "fut":
                             try:
                                 hackergen.tense(parts[0])
                             except:

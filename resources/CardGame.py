@@ -38,6 +38,10 @@ blacks = ["cahq.txt",
           "rationalityq.txt"
           ]
 
+# Extra files to use if hackergen is found:
+hackergen_whites = ["hackergena.txt"]
+hackergen_blacks = ["hackergenq.txt"]
+
 # How many cards in a hand:
 cards = 10
 
@@ -58,10 +62,14 @@ rootdir = os.path.join(os.path.split(os.getcwd())[0], "rabbit")
 if rootdir not in sys.path:
     sys.path.append(rootdir)
 
-from game import main
+from game import main, hackergen
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+if hackergen:
+    whites.append(hackergen_whites)
+    blacks.append(hackergen_blacks)
 
 main(whites=whites, blacks=blacks, cards=cards, port=port, debug=debug).start()
