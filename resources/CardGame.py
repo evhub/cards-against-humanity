@@ -41,12 +41,6 @@ blacks = ["cahq.txt",
 # How many cards in a hand:
 cards = 10
 
-# How many hackergen cards to use:
-hackergen_cards = 5
-
-# The limit on hackergen card length (in number of clauses):
-hackergen_cardlen = 2
-
 # Whether to turn on or off debug output:
 debug = False
 

@@ -46,6 +46,8 @@ except ImportError:
         import hackergen
     except ImportError:
         hackergen = None
+else:
+    hackergen.tense("fut")
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
@@ -53,7 +55,10 @@ except ImportError:
 
 class card(object):
     def __init__(self, text):
-        self.text = str(text)
+        if hackergen:
+            self.text = self.phrasesub(text)
+        else:
+            self.text = str(text)
         if re.compile(r".* \(\d+\)").match(self.text):
             self.text, self.blanks = self.text.rsplit(" (", 1)
             self.blanks = int(self.blanks[:-1])
@@ -61,11 +66,57 @@ class card(object):
             self.blanks = 0
             inside = False
             for c in self.text:
-                if c == "_" and not inside:
+                if c != "_":
+                    inside = False
+                elif not inside:
                     self.blanks += 1
                     inside = True
+    def phrasesub(self, text):
+        self.text = ""
+        inside = False
+        for c in str(text):
+            if inside:
+                if c == "}":
+                    if inside is True:
+                        inside = ""
+                    parts = inside.split(":")
+                    if len(parts) == 2:
+                        done = False
+                        if parts[0] != "fut":
+                            try:
+                                hackergen.tense(parts[0])
+                            except:
+                                done = None
+                            else:
+                                done = True
+                        if done is not None:
+                            if not parts[1]:
+                                self.text += hackergen.getPhrase()
+                                inside = False
+                            else:
+                                try:
+                                    num = int(parts[1])
+                                except ValueError:
+                                    inside = parts[1]
+                                else:
+                                    self.text += hackergen.getPhrase(num)
+                                    inside = False
+                            if done:
+                                hackergen.tense("fut")
+                    if inside is not False:
+                        self.text += "{"+inside+"}"
+                        inside = False
+                elif inside is True:
+                    inside = c
                 else:
-                    inside = False
+                    inside += c
+            elif c == "{":
+                if len(self.text) != 0 and self.text[-1] == "\\":
+                    self.text = self.text[:-1]+c
+                else:
+                    inside = True
+            else:
+                self.text += c
     def black(self):
         if self.blanks == 0:
             self.blanks = 1
@@ -109,8 +160,6 @@ class main(serverbase):
                  whites=["whites.txt"],
                  blacks=["blacks.txt"],
                  cards=10,
-                 hackergen_cards=0,
-                 hackergen_cardlen=0,
                  debug=False):
 
         self.ready = False
@@ -118,8 +167,6 @@ class main(serverbase):
         self.cards = int(cards)
         self.whites = whites
         self.blacks = blacks
-        self.hackergen_cards = int(hackergen_cards)
-        self.hackergen_cardlen = int(hackergen_cardlen)
 
         self.root = Tkinter.Tk()
         rootbind(self.root, self.disconnect)
@@ -161,16 +208,17 @@ class main(serverbase):
         self.blacks = self.blacks[count:]
         return out
 
+    def scramble(self):
+        self.whites = gen.scramble(self.whites)
+        self.blacks = gen.scramble(self.blacks)
+
     def begin(self):
         self.printdebug(": BEGIN")
         gen = random()
         if self.server:
             self.whites = getcards(self.whites, False)
-            if hackergen and self.hackergen_cards and self.hackergen_cardlen:
-                for x in xrange(0, self.hackergen_cards):
-                    self.whites.append(hackergen.getPhrase(self.hackergen_cardlen))
-            self.whites = gen.scramble(self.whites)
-            self.blacks = gen.scramble(getcards(self.blacks, True))
+            self.blacks = getcards(self.blacks, True)
+            self.scramble()
             self.scores = {None:0}
             for a in self.c.c:
                 self.queue[a].append(strlist(self.getwhites(self.cards), ";;"))
@@ -178,10 +226,11 @@ class main(serverbase):
             self.hand = self.getwhites(self.cards)
             self.order = [None]+self.c.c.keys()
             self.x = -1
+            self.app.display("Loaded with "+str(len(self.blacks))+" black cards and "+str(len(self.whites))+" white cards.")
         else:
             self.czar = False
             self.hand = map(card, self.receive().split(";;"))
-        self.app.display("Loaded with "+str(len(self.blacks))+" black cards and "+str(len(self.whites))+" white cards.")
+            self.app.display("Loaded.")
         self.black = None
         self.phased = False
         self.waiting = False
