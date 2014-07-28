@@ -40,12 +40,12 @@ from rabbit.all import (
     )
 
 try:
-    import hackergen
-except:
-    hackergen = None
-else:
-    if hasattr(hackergen, "phrasegen"):
-        hackergen = hackergen.phrasegen
+    import hackergen.phrasegen as hackergen
+except ImportError:
+    try:
+        import hackergen
+    except ImportError:
+        hackergen = None
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
