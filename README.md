@@ -3,7 +3,7 @@ Cards Against Humanity
 
 An extensible Cards Against Humanity game engine.
 
-## Instructions:
+## Installation Instructions:
 
 1. Download and install Python 2.7.7:
 	* https://www.python.org/download/releases/2.7.7/
@@ -19,3 +19,4 @@ An extensible Cards Against Humanity game engine.
 1. Clone Hacker Phrase Gen:
 	* https://github.com/evhub/hacker-phrase-generator
 2. Copy the "hackergen" folder into the "resources" folder
+	_If there is no hackergen folder, copy all the contents of hacker-phrase-generator into "resources" directly._
