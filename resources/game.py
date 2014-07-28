@@ -43,6 +43,9 @@ try:
     import hackergen
 except:
     hackergen = None
+else:
+    if hasattr(hackergen, "phrasegen"):
+        hackergen = hackergen.phrasegen
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # CODE AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
