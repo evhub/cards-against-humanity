@@ -16,7 +16,7 @@
 # DATA AREA: (IMPORTANT: DO NOT MODIFY THIS SECTION!)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-from __future__ import print_function
+from __future__ import with_statement, absolute_import, unicode_literals, print_function
 from rabbit.all import (
     serverbase,
     strlist,
@@ -98,12 +98,25 @@ def getcards(filenames, black=False):
     return list(set(cards))
 
 class main(serverbase):
-    def __init__(self, name="Cards Against the Brotherhood", message="Initializing...", speed=400, port=6775, whites=["whites.txt"], blacks=["blacks.txt"], cards=10, debug=False):
+    def __init__(self,
+                 name="Cards Against the Brotherhood",
+                 message="Initializing...",
+                 speed=400,
+                 port=6775,
+                 whites=["whites.txt"],
+                 blacks=["blacks.txt"],
+                 cards=10,
+                 hackergen_cards=0,
+                 hackergen_cardlen=0,
+                 debug=False):
+
         self.ready = False
         self.debug = bool(debug)
         self.cards = int(cards)
         self.whites = whites
         self.blacks = blacks
+        self.hackergen_cards = int(hackergen_cards)
+        self.hackergen_cardlen = int(hackergen_cardlen)
 
         self.root = Tkinter.Tk()
         rootbind(self.root, self.disconnect)
@@ -149,7 +162,11 @@ class main(serverbase):
         self.printdebug(": BEGIN")
         gen = random()
         if self.server:
-            self.whites = gen.scramble(getcards(self.whites))
+            self.whites = getcards(self.whites, False)
+            if hackergen and self.hackergen_cards and self.hackergen_cardlen:
+                for x in xrange(0, self.hackergen_cards):
+                    self.whites.append(hackergen.getPhrase(self.hackergen_cardlen))
+            self.whites = gen.scramble(self.whites)
             self.blacks = gen.scramble(getcards(self.blacks, True))
             self.scores = {None:0}
             for a in self.c.c:

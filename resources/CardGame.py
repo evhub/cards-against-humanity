@@ -23,6 +23,12 @@ blacks = ["cahq.txt", "homebrewq.txt", "expansion1q.txt", "expansion2q.txt", "ex
 # How many cards in a hand:
 cards = 10
 
+# How many hackergen cards to use:
+hackergen_cards = 5
+
+# The limit on hackergen card length (in number of clauses):
+hackergen_cardlen = 2
+
 # Whether to turn on or off debug output:
 debug = False
 
@@ -36,7 +42,7 @@ port = 6775
 import os
 import sys
 
-rootdir = os.path.join(os.path.split(os.getcwd())[0], 'rabbit')
+rootdir = os.path.join(os.path.split(os.getcwd())[0], "rabbit")
 if rootdir not in sys.path:
     sys.path.append(rootdir)
 
