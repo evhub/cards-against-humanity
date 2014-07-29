@@ -129,6 +129,11 @@ Anime:
 	Roy Mustang.
 	November 11.
 	Saber.
+	Rider.
+	Lancer.
+	Assassin.
+	Berserker.
+	Caster.
 
 Games:
 	G-Man.

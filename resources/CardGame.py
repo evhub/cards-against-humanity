@@ -39,8 +39,10 @@ blacks = ["cahq.txt",
           ]
 
 # Extra files to use if hackergen is found:
-hackergen_whites = ["hackergena.txt"]
-hackergen_blacks = ["hackergenq.txt"]
+hackergen_whites = ["hackergena.txt"
+                    ]
+hackergen_blacks = ["hackergenq.txt"
+                    ]
 
 # How many cards in a hand:
 cards = 10
