@@ -147,6 +147,10 @@ class card(object):
                     inside = True
             else:
                 out += c
+        if inside is True:
+            out += "{"
+        elif inside:
+            out += "{"+inside
         return out
 
     def black(self):
