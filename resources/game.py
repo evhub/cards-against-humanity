@@ -67,7 +67,7 @@ class card(object):
             out = str(text)
         self.blanks = 0
         if re.compile(r".* \(\d+\)").match(out):
-            out, self.blanks = out.rsplit(" (", 1)
+            self.text, self.blanks = out.rsplit(" (", 1)
             self.blanks = int(self.blanks[:-1])
         elif scan:
             self.text = ""
@@ -76,9 +76,14 @@ class card(object):
                 if c != "_":
                     inside = False
                 elif not inside:
+                    do = False
                     if len(self.text) != 0 and self.text[-1] == "\\":
                         self.text = self.text[:-1]
+                        if len(self.text) != 1 and self.text[-2] == "\\":
+                            do = True
                     else:
+                        do = True
+                    if do:
                         self.blanks += 1
                         inside = True
                 self.text += c
@@ -133,7 +138,11 @@ class card(object):
                     inside += c
             elif c == "{":
                 if len(out) != 0 and out[-1] == "\\":
-                    out = out[:-1]+c
+                    if len(out) != 1 and out[-2] == "\\":
+                        out = out[:-1]
+                        inside = True
+                    else:
+                        out = out[:-1]+c
                 else:
                     inside = True
             else:
