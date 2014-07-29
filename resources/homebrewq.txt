@@ -4,7 +4,7 @@ A demiplane entirely devoted to _.
 The couch is made of _.
 Kill it! Kill it with _.
 Riding _ into battle.
-_ is love, is life.
+_ is love, \_ is life.
 This is MY _, laddie.
 Mai _-u.
 The recent decision to add _ to the required viewing list was controversial.
@@ -63,3 +63,5 @@ The internet is for _.
 I've contracted a mild case of _. 
 Well, we did the math. Turns out the sum of all natural numbers is actually _.
 _ would fit right in with the good party. 
+"Oh no, the _ is dead," they seemed to say.
+In the new Fate/SN ending, Saber's love interest is _.
