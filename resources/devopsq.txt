@@ -10,7 +10,7 @@ The only thing necessary for evil to triumph is _.
 Will merge pull requests for _.
 _ is the new _.
 Apple just patented _.
-When I was a kid we didn't have _.
+When I was a kid, we didn't have your new-fangled _.
 _: Now with 100% more _!
 Google built a datacenter on the moon to lessen the risk of _ causing problems.
 Restoring from backups failed due to _.
@@ -34,3 +34,5 @@ Hand-crafted artisanal _.
 _ is the new _.
 Fascists can't stand _.
 North Korea finally launched warheads because of _.
+Instead of VIM or EMACS, my text editor of choice is _.
+The Internet is for _.
