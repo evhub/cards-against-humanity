@@ -38,9 +38,7 @@ from rabbit.all import (
     formatisno,
     madeof,
     containsany,
-    re,
-    encoding,
-    old_str
+    re
     )
 
 try:
