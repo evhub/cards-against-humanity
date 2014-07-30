@@ -19,4 +19,4 @@ An extensible Cards Against Humanity game engine.
 1. Clone Hacker Phrase Gen:
 	* https://github.com/evhub/hacker-phrase-generator
 2. Copy the "hackergen" folder into the "resources" folder
-	* _If there is no hackergen folder, copy all the contents of hacker-phrase-generator into "resources" directly._
+	* _If there is no hackergen folder, copy all the contents of hacker-phrase-generator into "resources" directly_
