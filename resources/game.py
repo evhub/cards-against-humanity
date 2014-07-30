@@ -18,6 +18,8 @@
 
 from __future__ import with_statement, absolute_import, unicode_literals, print_function
 from rabbit.all import (
+    str,
+    print,
     serverbase,
     strlist,
     random,
@@ -36,7 +38,9 @@ from rabbit.all import (
     formatisno,
     madeof,
     containsany,
-    re
+    re,
+    encoding,
+    old_str
     )
 
 try:
@@ -190,15 +194,15 @@ def getcards(filenames, black=False):
                             line = line[:-2]+line[-1]
                         elif not containsany(line[:-1], ["!", "?", "."]):
                             line = line[:-1]
-                    line = basicformat(line).replace("\\n", "\n").replace("\\\n", "\\n")
-                    cards.append(card(line), black)
+                    line = line.replace("\\n", "\n").replace("\\\n", "\\n")
+                    cards.append(card(line, black))
                     if black:
                         cards[-1].black()
                     else:
                         cards[-1].white()
         except IOError:
-            pass
-        else:
+            print("WARNING: Unable to find file "+str(name))
+        finally:
             f.close()
     return list(set(cards))
 
@@ -260,12 +264,12 @@ class main(serverbase):
         return out
 
     def scramble(self):
+        gen = random()
         self.whites = gen.scramble(self.whites)
         self.blacks = gen.scramble(self.blacks)
 
     def begin(self):
         self.printdebug(": BEGIN")
-        gen = random()
         if self.server:
             self.whites = getcards(self.whites, False)
             self.blacks = getcards(self.blacks, True)
