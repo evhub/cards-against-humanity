@@ -25,7 +25,8 @@ whites = ["caha.txt",
           "expansion4a.txt",
           "misca.txt",
           "xkcda.txt",
-          "rationalitya.txt"
+          "rationalitya.txt",
+          "devopsa.txt"
           ]
 blacks = ["cahq.txt",
           "homebrewq.txt",
@@ -35,7 +36,8 @@ blacks = ["cahq.txt",
           "expansion4q.txt",
           "miscq.txt",
           "xkcdq.txt",
-          "rationalityq.txt"
+          "rationalityq.txt",
+          "devopsq.txt"
           ]
 
 # Extra files to use if hackergen is found:
