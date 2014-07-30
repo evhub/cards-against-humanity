@@ -179,9 +179,17 @@ def getcards(filenames, black=False):
             f = openfile(name, "rb")
             for line in readfile(f).splitlines():
                 line = basicformat(line)
-                if line and not (line.startswith("#") or line.endswith(":")):
-                    if not black and line[-1] == "." and not containsany(line[:-1], ["!", "?", "."]):
-                        line = line[:-1]
+                if line and not line.startswith("#"):
+                    if line.endswith(":"):
+                        if len(line) > 1 and line[-2] == "\\":
+                            line = line[:-2]+line[-1]
+                        else:
+                            continue
+                    elif not black and line.endswith(".") and len(line) > 1:
+                        if line[-2] == "\\":
+                            line = line[:-2]+line[-1]
+                        elif not containsany(line[:-1], ["!", "?", "."]):
+                            line = line[:-1]
                     line = basicformat(line).replace("\\n", "\n").replace("\\\n", "\\n")
                     cards.append(card(line), black)
                     if black:
