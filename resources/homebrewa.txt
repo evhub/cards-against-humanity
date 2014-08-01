@@ -142,6 +142,8 @@ Anime:
 	Caster.
 
 Games:
+	A crowbar.
+	Gordon Freeman.
 	G-Man.
 	The Scout.
 	The Soldier.
