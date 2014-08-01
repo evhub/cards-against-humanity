@@ -62,7 +62,7 @@ port = 6775
 import os
 import sys
 
-rootdir = os.path.join(os.path.split(os.getcwd())[0], "rabbit")
+rootdir = os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), "rabbit")
 if rootdir not in sys.path:
     sys.path.append(rootdir)
 

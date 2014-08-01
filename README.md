@@ -5,8 +5,8 @@ An extensible Cards Against Humanity game engine.
 
 ## Installation Instructions:
 
-1. Download and install Python 2.7.7:
-	* https://www.python.org/download/releases/2.7.7/
+1. Download and install Python 2.7.8:
+	* https://www.python.org/download/releases/2.7.8/
 2. Download and unzip the latest version of Rabbit:
 	* https://github.com/evhub/rabbit/releases/latest
 3. Drag the "rabbit" folder into the "resources" folder
