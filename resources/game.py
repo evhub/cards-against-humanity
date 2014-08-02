@@ -189,7 +189,10 @@ def getcards(filenames, black=False):
                             continue
                     elif not black and line.endswith(".") and len(line) > 1:
                         if line[-2] == "\\":
-                            line = line[:-2]+line[-1]
+                            if len(line) > 2 and line[-3] == "\\":
+                                line = line[:-2]
+                            else:
+                                line = line[:-2]+line[-1]
                         elif not containsany(line[:-1], ["!", "?", "."]):
                             line = line[:-1]
                     line = line.replace("\\n", "\n").replace("\\\n", "\\n")
