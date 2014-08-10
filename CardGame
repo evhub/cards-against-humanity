@@ -1,2 +1,2 @@
-#!/usr/bin/python
-from resources import CardGame
+cd resources
+python CardGame.py
