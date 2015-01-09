@@ -1,4 +1,2 @@
 #!/usr/bin/python
-import os
-os.chdir(os.path.join(os.getcwd(), "resources"))
 from resources import CardGame
