@@ -152,6 +152,7 @@ Anime:
 	Assassin.
 	Berserker.
 	Caster.
+	S-s-senpai.
 
 Games:
 	A crowbar.
