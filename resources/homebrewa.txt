@@ -50,9 +50,9 @@ Group Jokes:
 	Cat GIFs.
 	An extra-large bro-tank.
 	A tiger with a mane.
-	Being short. 
-	Being tall. 
-	Show tunes. 
+	Being short.
+	Being tall.
+	Show tunes.
 	Lemons.
 	Yolo Swaggins.
 	A pirate ship with legs.
@@ -132,6 +132,14 @@ DnD:
 	Sex dragons.
 	Mage's magnificent mansion.
 	An eldritch monstrosity made of tentacles.
+    Matriarch.
+    Mangela.
+    Tangela.
+    Rangela.
+    Ivan the Terrible.
+    Rollangela.
+    Cramgela.
+    Handgela.
 
 Anime:
 	Unlimited airplane works.
@@ -176,6 +184,8 @@ Games:
 	The Spy.
 	A portal gun.
 	Pyrovision.
+    JARAXXUS.
+    Nerdstone.
 
 Other Shows:
 	Twan.
