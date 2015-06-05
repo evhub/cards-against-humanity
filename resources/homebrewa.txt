@@ -50,9 +50,9 @@ Group Jokes:
 	Cat GIFs.
 	An extra-large bro-tank.
 	A tiger with a mane.
-	Being short. 
-	Being tall. 
-	Show tunes. 
+	Being short.
+	Being tall.
+	Show tunes.
 	Lemons.
 	Yolo Swaggins.
 	A pirate ship with legs.
@@ -206,6 +206,13 @@ Other Shows:
 	FOR PROFIT!
 	Bee wings.
 	Gravity boots.
+    Kung Fury.
+    Kung Fuhrer.
+    Triceracop.
+    Thor's pecs.
+    Barbarianna.
+    Hackerman.
+    The Hoff-9000.
 
 Politics, Math, Science, and History:
 	Canadians.
