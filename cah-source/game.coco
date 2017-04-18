@@ -268,7 +268,7 @@ class CAH:
         choices = self.round_cards.values() |> list
         random.shuffle(choices)
 
-        self.bot.send("Time to choose, %s.\nThe black card is:\n  %s\nYour choices are:\n%s." % (
+        self.bot.send("Time to choose, %s!\nThe black card was:\n  %s\nYour choices are:\n%s." % (
             self.cardczar, self.black_card, "\n".join("  " + "; ".join(str(c) for c in cards) for cards in choices)))
 
     def pick_card(self, sender, name):

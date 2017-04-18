@@ -1,0 +1,126 @@
+import os.path
+import re
+import random
+
+def word(text):
+    text = text.strip().lstrip(">").rstrip("<")
+    if text.lstrip() == text:
+        return " " + text
+    else:
+        return text
+
+data_dir = os.path.join(os.path.dirname(__file__), "phrases")
+def words_from_file(filename):
+    filedir = os.path.join(data_dir, filename)
+    with open(filedir, "r") as file:
+        for line in file.readlines():
+            yield word(line)
+read_words = tuple..words_from_file
+
+nouns = read_words("nouns.txt")
+adjs = read_words("adjs.txt")
+verbs = read_words("verbs.txt")
+articles = read_words("articles.txt")
+preps = read_words("preps.txt")
+conjs = read_words("conjs.txt")
+
+def to_act(verb):
+    if verb.endswith("s") or verb.endswith("y"):
+       return verb + "es"
+    else:
+       return verb + "s"
+
+def to_fut(verb) =
+    " will" + verb
+
+def to_inf(verb):
+    if verb.endswith("e"):
+       return verb[:-1] + "ing"
+    elif verb.endswith("p"):
+       return verb + "ping"
+    else:
+       return verb + "ing"
+
+def to_pas(verb):
+    if verb == "run":
+        return "ran"
+    elif verb.endswith("e"):
+        return verb + "d"
+    elif verb.endswith("p"):
+        return verb + "ped"
+    else:
+        return verb + "ed"
+
+to_tense = {
+    "ACT": to_act,
+    "FUT": to_fut,
+    "INF": to_inf,
+    "PAS": to_pas,
+}
+
+def format_articles(phrase) =
+    re.sub(r"\ba ([aeiou])", r"an \1", phrase)
+
+class PhraseGen:
+    def __init__(self, tense):
+        self.verbs = verbs |> map$(to_tense[tense]) |> tuple
+
+    def reset(self):
+        self.part = "ARTICLE"
+        self.subj = True
+
+    def rand_word(self) =
+        random.choice({
+           "SUBJ"   :nouns,
+           "OBJ"    :nouns,
+           "ADJ"    :adjs,
+           "VERB"   :self.verbs,
+           "ARTICLE":articles,
+           "PREP"   :preps,
+           "CONJ"   :conjs,
+           "END"    :("",),
+        }[self.part])
+
+    def subj_or_obj(self) =
+        "SUBJ" if self.subj else "OBJ"
+
+    def choices(self) = {
+        "SUBJ": [ ("VERB", 1.0) ],
+        "OBJ": [ ("PREP", 0.6), ("CONJ", 0.3), ("END", 0.1) ],
+        "ADJ": [ ("ADJ", 0.3), (self.subj_or_obj(), 0.7) ],
+        "VERB": [ ("PREP", 0.5), ("ARTICLE", 0.5) ],
+        "ARTICLE": [ ("ADJ", 0.6), (self.subj_or_obj(), 0.4) ],
+        "PREP": [ ("ARTICLE", 1.0) ],
+        "CONJ": [ ("ARTICLE", 1.0) ],
+    }[self.part]
+
+    def next_part(self):
+        prob_mass = random.random()
+        for choice in self.choices():
+            part, prob = choice
+            if prob >= prob_mass:
+                break
+            else:
+                prob_mass -= prob
+        self.part = part
+        if part in ["VERB", "CONJ"]:
+            self.subj = not self.subj
+
+    def phrase(self, conj_limit=-1):
+        self.reset()
+        conj_count = 0
+        phrase = ""
+        while True:
+            if self.part == "END":
+                break
+            else:
+                if self.part == "CONJ":
+                    conj_count += 1
+                    if conj_count == conj_limit:
+                        break
+                phrase += self.rand_word()
+                self.next_part()
+        return format_articles(phrase).strip()
+
+    def __getitem__(self, other) =
+        self.phrase(conj_limit=other)

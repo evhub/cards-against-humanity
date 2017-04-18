@@ -1,0 +1,20 @@
+class Card:
+    __slots__ = ()
+    def quote(self) =
+        repr(str(self))
+    def verify(self) =
+        assert isinstance(self.text, str) and self.text, self
+        self
+    def matches(self, other) =
+        str(self).lower().startswith(other.lower())
+
+data WhiteCard(text) from Card:
+    def __str__(self) =
+        self.text
+
+data BlackCard(text, blanks) from Card:
+    def __str__(self) =
+        self.text + " (" + str(self.blanks) + ")"
+    def verify(self) =
+        assert isinstance(self.blanks, int) and self.blanks > 0, self
+        super(BlackCard, self).verify()

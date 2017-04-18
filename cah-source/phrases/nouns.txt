@@ -39,7 +39,6 @@ port
 RAM
 ROM
 register
-registrar
 repository
 server
 sender

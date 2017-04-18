@@ -1,0 +1,34 @@
+import argparse
+
+from cah.game import CAH
+from cah.irc import IRCBot
+
+def start(ip, port, channel, num_cards=10):
+    IRCBot(ip, port, channel, CAH(num_cards).handle_msg).run()
+
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument(
+    "channel",
+    metavar="channel",
+    type=str,
+    default="#evhubcah",
+    nargs="?",
+)
+arg_parser.add_argument(
+    "ip",
+    metavar="ip",
+    type=str,
+    default="chat.freenode.net",
+    nargs="?",
+)
+arg_parser.add_argument(
+    "port",
+    metavar="port",
+    type=int,
+    default=6667,
+    nargs="?",
+)
+
+if __name__ == "__main__":
+    args = arg_parser.parse_args()
+    start(args.ip, args.port, args.channel)

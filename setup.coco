@@ -1,0 +1,14 @@
+import setuptools
+
+import sys
+import os.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+setuptools.setup(
+    name="cah",
+    version="0.0.1",
+    url="https://github.com/evhub/cards-against-humanity",
+    author="Evan Hubinger",
+    author_email="evanjhub@gmail.com",
+    packages=setuptools.find_packages(),
+)

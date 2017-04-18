@@ -1,0 +1,80 @@
+import socket
+import re
+import time
+
+class IRCBot:
+    def __init__(self, ip, port, channel, msg_handler, throttle_num=5, throttle_time=2, nick="cahbot", prefix="cah"):
+        self.ip = ip
+        self.port = port
+        self.channel = channel
+        self.msg_handler = msg_handler
+        self.throttle_num = throttle_num
+        self.throttle_time = throttle_time
+        self.prefix = prefix
+        self.num = 0
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((ip, port))
+        self.socket_send("NICK " + nick)
+        self.socket_send("USER " + nick + " * 8 : CAH Bot")
+        self.socket_send("JOIN " + channel)
+
+    @property
+    def throttle(self) = (
+        self.throttle_num is not None
+        and self.throttle_num >= 0
+        and self.throttle_time is not None
+        and self.throttle_time > 0
+    )
+
+    def socket_send(self, *messages):
+        for msg in messages:
+            print("< %r" % msg)
+            self.socket.send((msg + "\r\n").encode("utf8"))
+            if self.throttle:
+                if self.num >= self.throttle_num:
+                    print("...")
+                    time.sleep(self.throttle_time)
+                    self.num = 0
+                else:
+                    self.num += 1
+
+    def send(self, message):
+        self.send_to(None, message)
+
+    def send_to(self, nick, message):
+        if nick is None:
+            nick = self.channel
+        self.socket_send(*("PRIVMSG " + nick + " :" + line
+            for line in message.splitlines()))
+
+    def pong(self):
+        self.socket_send("PONG :pingis")
+
+    msg_matcher = re.compile(r":(.+?)\s+(.+?)\s+.*?:(.+)\s*")
+    def recv(self, length=4096):
+        received = self.socket.recv(length).decode("utf8")
+        if received:
+            print("> %r" % received)
+            if re.\match(r"^PING", received):
+                return "PING", " ", " "
+            result = self.msg_matcher.\match(received)
+            if result is not None:
+                sender, dtype, message = result.groups()
+                return dtype, sender.split("!", 1)[0], message
+        return False, False, False
+
+    def update(self):
+        dtype, sender, message = self.recv()
+        self.num = 0
+        if dtype and sender and message:
+            if dtype == "PRIVMSG" and message.startswith(self.prefix):
+                self.msg_handler(self, sender, message[(len(self.prefix)):].strip())
+            elif dtype == "PING":
+                self.pong()
+
+    def run(self):
+        try:
+            while True:
+                self.update()
+        except KeyboardInterrupt:
+            print("Terminated game.")
