@@ -46,7 +46,7 @@ class CAH:
         "players": (self.show_players$(sender), 0, None),
         "join": (self.add_player$(sender), 0, None),
         "leave": (self.rem_player$(sender), 0, None),
-        "addplayer": (self.add_player, 1, None),
+        "add": (self.add_player, 1, None),
         "kick": (self.add_player, 1, None),
         "sets": (self.show_sets$(sender), 0, None),
         "addset": (self.add_set$(sender), 1, "idle"),
@@ -151,9 +151,9 @@ class CAH:
         if self.state == "idle":
             self.bot.send_to(sender, "Waiting for game to start. Type 'cah join' to join the game.")
         elif self.state == "play":
-            self.bot.send_to(sender, "Playing on black card:\n  %s\nType 'cah play' to play a card." % (self.black_card,))
+            self.bot.send_to(sender, "Card Czar: %s\nPlaying on black card:\n  %s\nType 'cah play' to play a card." % (self.cardczar, self.black_card))
         elif self.state == "pick":
-            self.bot.send_to(sender, "Picking best submission for black card:\n  %s\nType 'cah pick' to pick a card." % (self.black_card,))
+            self.bot.send_to(sender, "Card Czar: %s\nPicking best submission for black card:\n  %s\nType 'cah pick' to pick a card." % (self.cardczar, self.black_card))
         else:
             self.show_help(sender)
 
@@ -171,19 +171,25 @@ class CAH:
             self.show_players()
             self.next_round()
 
-    def add_player(self, sender):
-        self.player_cards[sender] = []
-        self.player_scores[sender] = 0
-        self.give_cards(sender, self.num_cards)
-        self.bot.send("%s has joined the game." % sender)
+    def add_player(self, player):
+        if player in player_cards:
+            self.bot.send_to(player, "You are already in the game.")
+            return
+        self.player_cards[player] = []
+        self.player_scores[player] = 0
+        self.give_cards(player, self.num_cards)
+        self.bot.send("%s has joined the game." % player)
         if self.state == "play" or self.state == "pick":
             self.bot.send("Resetting round.")
             self.next_round()
 
-    def rem_player(self, sender):
-        del self.player_cards[sender]
-        del self.player_scores[sender]
-        self.bot.send("%s has left the game." % sender)
+    def rem_player(self, player):
+        if player not in player_cards:
+            self.bot.send("Player %s is not in the game." % player)
+            return
+        del self.player_cards[player]
+        del self.player_scores[player]
+        self.bot.send("%s has left the game." % player)
         if self.state == "play" or self.state == "pick":
             self.bot.send("Resetting round.")
             self.next_round()
@@ -198,8 +204,9 @@ class CAH:
         self.black_card = self.black_cards.pop()
 
     def next_round(self):
+        if set(self.players) != set(self.player_cards):
+            self.players = deque(self.player_cards.keys())
         self.state = "play"
-        self.players = deque(self.player_cards.keys())
         self.refresh_cards()
         self.new_cardczar()
         self.new_black_card()
@@ -279,13 +286,13 @@ class CAH:
         match_to = name.strip().lower()
         matching = []
         for player in self.round_cards:
-            for cards in self.round_cards[player]:
-                for card in cards:
-                    if card.matches(name):
-                        matching.append((player, card))
+            for card in self.round_cards[player]:
+                if card.matches(name):
+                    matching.append((player, card))
         if not matching:
             self.bot.send_to(self.cardczar, "Unknown card prefix: %r" % match_to)
         elif len(matching) == 1:
+            player = matching[0][0]
             self.player_scores[player] += 1
             self.bot.send("The point goes to %s, with the winning entry:\n  %s\nCurrent scores:\n%s" %
                 (player, "; ".join(str(card) for card in self.round_cards[player]), self.score_str()))

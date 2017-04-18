@@ -12,6 +12,7 @@ class IRCBot:
         self.throttle_time = throttle_time
         self.prefix = prefix
         self.num = 0
+        self.time = time.time()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((ip, port))
         self.socket_send("NICK " + nick)
@@ -33,7 +34,10 @@ class IRCBot:
             if self.throttle:
                 if self.num >= self.throttle_num:
                     print("...")
-                    time.sleep(self.throttle_time)
+                    sleep_time = self.throttle_time + self.time - time.time()
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
+                    self.time = time.time()
                     self.num = 0
                 else:
                     self.num += 1
@@ -65,7 +69,6 @@ class IRCBot:
 
     def update(self):
         dtype, sender, message = self.recv()
-        self.num = 0
         if dtype and sender and message:
             if dtype == "PRIVMSG" and message.startswith(self.prefix):
                 self.msg_handler(self, sender, message[(len(self.prefix)):].strip())

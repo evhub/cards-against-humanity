@@ -11,7 +11,7 @@ arg_parser.add_argument(
     "channel",
     metavar="channel",
     type=str,
-    default="#evhubcah",
+    default="#timesuck",
     nargs="?",
 )
 arg_parser.add_argument(
