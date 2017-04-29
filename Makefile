@@ -1,3 +1,7 @@
+.PHONY: help
+help: install
+	python -m cah -h
+
 .PHONY: run
 run: install
 	python -m cah

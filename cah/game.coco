@@ -16,11 +16,11 @@ class CAH:
         self.num_cards = num_cards
         self.whites = white_files |> list
         self.blacks = black_files |> list
-        self.reset()
+        self.setup()
 
-    def reset(self, sender=None):
+    def setup(self, sender=None):
         if sender is not None:
-            self.bot.send("Game reset by %s." % sender)
+            self.bot.send("Game restarted by %s." % sender)
 
         self.white_cards = self.whites |> whites
         self.black_cards = self.blacks |> blacks
@@ -40,8 +40,8 @@ class CAH:
         "status": (self.show_status$(sender), 0, None),
         "broadcast": (self.show_status$(None), 0, None),
         "cards": (self.show_cards$(sender), 0, "play"),
-        "play": (self.play_card$(sender), 1, "play"),
-        "pick": (self.pick_card$(sender), 1, "pick"),
+        "play": (self.play_card$(sender), None, "play"),
+        "pick": (self.pick_card$(sender), None, "pick"),
         "start": (self.start$(sender), 0, "idle"),
         "players": (self.show_players$(sender), 0, None),
         "join": (self.add_player$(sender), 0, None),
@@ -51,19 +51,23 @@ class CAH:
         "sets": (self.show_sets$(sender), 0, None),
         "addset": (self.add_set$(sender), 1, "idle"),
         "remset": (self.rem_set$(sender), 1, "idle"),
-        "reset": (self.reset$(sender), 0, None),
+        "restart": (self.setup$(sender), 0, None),
         "kill": (interrupt, 0, None),
     }
 
     def handle_msg(self, bot, sender, message):
         self.bot = bot
         cmd = message.split()
+        if not cmd:
+            cmd = ["help"]
         for arg, (func, nargs, state) in self.handlers(sender).items():
             if cmd[0] == arg:
-                if len(cmd) != nargs + 1:
-                    self.bot.send_to(sender, "The %r command requires %s arguments." % (arg, nargs))
-                elif state is not None and self.state != state:
+                if state is not None and self.state != state:
                     self.bot.send_to(sender, "The %r command is not available right now." % arg)
+                elif nargs is None:
+                    func(" ".join(cmd[1:]))
+                elif len(cmd) != nargs + 1:
+                    self.bot.send_to(sender, "The %r command requires %s arguments." % (arg, nargs))
                 elif nargs:
                     func(*cmd[-nargs:])
                 else:
@@ -121,8 +125,11 @@ class CAH:
         self.players.rotate(1)
 
     @property
-    def cardczar(self) =
-        self.players[0]
+    def cardczar(self):
+        if self.players:
+            return self.players[0]
+        else:
+            return ""
 
     def all_played(self):
         for player in self.players:
@@ -149,7 +156,7 @@ class CAH:
 
     def show_status(self, sender=None):
         if self.state == "idle":
-            self.bot.send_to(sender, "Waiting for game to start. Type 'cah join' to join the game.")
+            self.bot.send_to(sender, "Waiting for game to start. Type 'cah join' to join the game or 'cah start' to start the game.")
         elif self.state == "play":
             self.bot.send_to(sender, "Card Czar: %s\nPlaying on black card:\n  %s\nType 'cah play' to play a card." % (self.cardczar, self.black_card))
         elif self.state == "pick":
@@ -172,7 +179,7 @@ class CAH:
             self.next_round()
 
     def add_player(self, player):
-        if player in player_cards:
+        if player in self.player_cards:
             self.bot.send_to(player, "You are already in the game.")
             return
         self.player_cards[player] = []
@@ -184,7 +191,7 @@ class CAH:
             self.next_round()
 
     def rem_player(self, player):
-        if player not in player_cards:
+        if player not in self.player_cards:
             self.bot.send("Player %s is not in the game." % player)
             return
         del self.player_cards[player]
@@ -216,7 +223,8 @@ class CAH:
     def send_cards(self):
         for player in self.players:
             self.bot.send_to(player, "White cards in hand:\n%s" % self.card_str(player))
-            self.bot.send_to(player, "Playing on black card:\n  %s" % (self.black_card,))
+            if self.cardczar != player:
+                self.bot.send_to(player, "Playing on black card:\n  %s" % (self.black_card,))
 
     def match_card(self, player, cards, match_to):
         match_to = match_to.lower()
@@ -239,7 +247,7 @@ class CAH:
         return None
 
     def play_card(self, sender, name):
-        if sender == self.cardczar:
+        if self.cardczar == sender:
             self.bot.send_to(sender, "You can't play any cards; you're the card czar.")
             return
 
@@ -279,7 +287,7 @@ class CAH:
             self.cardczar, self.black_card, "\n".join("  " + "; ".join(str(c) for c in cards) for cards in choices)))
 
     def pick_card(self, sender, name):
-        if sender != self.cardczar:
+        if self.cardczar != sender:
             self.bot.send_to(sender, "Only the card czar can pick a card.")
             return
 
