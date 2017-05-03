@@ -38,19 +38,20 @@ class CAH:
         # "cmd": (func, args, state)
         "help": (self.show_help$(sender), 0, None),
         "status": (self.show_status$(sender), 0, None),
-        "broadcast": (self.show_status$(None), 0, None),
-        "cards": (self.show_cards$(sender), 0, "play"),
         "play": (self.play_card$(sender), None, "play"),
         "pick": (self.pick_card$(sender), None, "pick"),
-        "start": (self.start$(sender), 0, "idle"),
+        "cards": (self.show_cards$(sender), 0, "play"),
+        "scores": (self.show_scores$(sender), 0, None),
         "players": (self.show_players$(sender), 0, None),
+        "sets": (self.show_sets$(sender), 0, None),
         "join": (self.add_player$(sender), 0, None),
         "leave": (self.rem_player$(sender), 0, None),
         "add": (self.add_player, 1, None),
         "kick": (self.add_player, 1, None),
-        "sets": (self.show_sets$(sender), 0, None),
+        "start": (self.start$(sender), 0, "idle"),
         "addset": (self.add_set$(sender), 1, "idle"),
         "remset": (self.rem_set$(sender), 1, "idle"),
+        "broadcast": (self.show_status$(None), 0, None),
         "restart": (self.setup$(sender), 0, None),
         "kill": (interrupt, 0, None),
     }
@@ -158,17 +159,22 @@ class CAH:
         if self.state == "idle":
             self.bot.send_to(sender, "Waiting for game to start. Type 'cah join' to join the game or 'cah start' to start the game.")
         elif self.state == "play":
-            self.bot.send_to(sender, "Card Czar: %s\nPlaying on black card:\n  %s\nType 'cah play' to play a card." % (self.cardczar, self.black_card))
+            self.bot.send_to(sender, "Card Czar: %s\nPlaying on black card:\n  %s\nType 'cah play' to play a card."
+                % (self.cardczar, self.black_card))
         elif self.state == "pick":
-            self.bot.send_to(sender, "Card Czar: %s\nPicking best submission for black card:\n  %s\nType 'cah pick' to pick a card." % (self.cardczar, self.black_card))
+            self.bot.send_to(sender, "Card Czar: %s\nPicking best submission for black card:\n  %s\nType 'cah pick' to pick a card."
+                % (self.cardczar, self.black_card))
         else:
             self.show_help(sender)
 
     def show_sets(self, sender=None):
         self.bot.send_to(sender, "Using sets: " + self.sets_str())
 
-    def show_cards(self, sender=None):
-        self.bot.send_to(sender, self.card_str(sender))
+    def show_scores(self, sender=None):
+        self.bot.send_to(sender, "Current scores:\n%s" % self.score_str())
+
+    def show_cards(self, sender):
+        self.bot.send_to(sender, "White cards in hand:\n%s" % self.card_str(sender))
 
     def start(self, sender=None):
         if self.num_players < 3:
@@ -222,7 +228,7 @@ class CAH:
 
     def send_cards(self):
         for player in self.players:
-            self.bot.send_to(player, "White cards in hand:\n%s" % self.card_str(player))
+            self.show_cards(player)
             if self.cardczar != player:
                 self.bot.send_to(player, "Playing on black card:\n  %s" % (self.black_card,))
 
@@ -283,7 +289,7 @@ class CAH:
         choices = self.round_cards.values() |> list
         random.shuffle(choices)
 
-        self.bot.send("Time to choose, %s!\nThe black card was:\n  %s\nYour choices are:\n%s." % (
+        self.bot.send("Time to choose, %s!\nThe black card was:\n  %s\nYour choices are:\n%s" % (
             self.cardczar, self.black_card, "\n".join("  " + "; ".join(str(c) for c in cards) for cards in choices)))
 
     def pick_card(self, sender, name):
@@ -302,8 +308,9 @@ class CAH:
         elif len(matching) == 1:
             player = matching[0][0]
             self.player_scores[player] += 1
-            self.bot.send("The point goes to %s, with the winning entry:\n  %s\nCurrent scores:\n%s" %
-                (player, "; ".join(str(card) for card in self.round_cards[player]), self.score_str()))
+            self.bot.send("The point goes to %s, with the winning entry:\n  %s" %
+                (player, "; ".join(str(card) for card in self.round_cards[player])))
+            self.show_scores()
             self.next_round()
         else:
             self.bot.send_to(player, "Prefix matches multiple cards:\n"

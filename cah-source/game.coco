@@ -309,7 +309,7 @@ class CAH:
             player = matching[0][0]
             self.player_scores[player] += 1
             self.bot.send("The point goes to %s, with the winning entry:\n  %s" %
-                (player, "; ".join(str(card) for card in self.round_cards[player]))
+                (player, "; ".join(str(card) for card in self.round_cards[player])))
             self.show_scores()
             self.next_round()
         else:

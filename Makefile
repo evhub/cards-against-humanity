@@ -31,7 +31,3 @@ clean:
 wipe: clean
 	find . -name '*.py' -delete
 	rm -rf ./cah
-
-.PHONY: watch
-watch: install
-	coconut cah -sw -j sys
